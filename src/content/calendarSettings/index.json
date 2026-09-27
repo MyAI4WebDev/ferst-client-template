@@ -1,0 +1,9 @@
+{
+  "title": "Calendar",
+  "intro": "",
+  "embedUrl": "",
+  "publicUrl": "",
+  "height": 700,
+  "provider": "Google Calendar",
+  "weekStart": "monday"
+}

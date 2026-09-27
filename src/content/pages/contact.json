@@ -1,0 +1,32 @@
+{
+  "title": "Contact",
+  "blocks": [
+    {
+      "type": "hero",
+      "layout": "centered",
+      "background": "mesh",
+      "eyebrow": "Say hello",
+      "title": "Get in touch",
+      "subtitle": "We would love to hear from you. Replace this with your own contact details."
+    },
+    {
+      "type": "contactForm",
+      "title": "Send us a message",
+      "intro": "Fill in the form and we will get back to you.",
+      "submitLabel": "Send message",
+      "note": "This is a demo form — connect it to your own email or a form service to start receiving messages.",
+      "fields": [
+        { "name": "name", "label": "Your name", "type": "text", "required": true },
+        { "name": "email", "label": "Email", "type": "email", "required": true },
+        { "name": "message", "label": "Message", "type": "textarea", "required": true, "placeholder": "How can we help?" }
+      ]
+    },
+    {
+      "type": "notice",
+      "tone": "accent",
+      "icon": "bell",
+      "title": "Add your details",
+      "text": "Edit this page to add your phone, email and address, and to connect the form to your inbox."
+    }
+  ]
+}

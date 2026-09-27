@@ -1,0 +1,25 @@
+name: Checks
+
+# Runs on every client site AND on this template repo itself: the thin-client
+# guard (a client must DEPEND on ferst-core, never copy it) plus a real build.
+on:
+  push:
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - name: Thin-client guard (no copies of ferst-core in src/)
+        run: npx --no-install ferst-check-thin
+      - name: Build (astro + generated CMS config)
+        run: npm run build
+        env:
+          # GITHUB_REPOSITORY is set by Actions; ferst-cms-config reads it for the
+          # CMS backend repo. CF_PAGES_BRANCH stamps the CMS backend branch.
+          CF_PAGES_BRANCH: ${{ github.ref_name }}

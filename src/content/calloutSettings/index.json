@@ -1,0 +1,10 @@
+{
+  "enabled": false,
+  "label": "",
+  "icon": "calendar",
+  "title": "",
+  "text": "",
+  "position": "bottom-right",
+  "dismissible": true,
+  "id": "ferst-callout"
+}

@@ -1,0 +1,30 @@
+{
+  "$comment": "Ownership manifest for the Ferst thin-client. The platform reads this: `ownedPaths` are TEMPLATE-owned (kept in sync from this upstream, never hand-edited in a client); `clientPaths` are the client's own data (never touched by an update). See docs/UPDATING.md.",
+  "templateVersion": "1.0.0",
+  "coreRange": "^0.5.0",
+  "ownedPaths": [
+    "package.json",
+    "astro.config.mjs",
+    "tsconfig.json",
+    ".gitignore",
+    "src/content/config.ts",
+    "public/admin/index.html",
+    ".github/workflows/unit.yml",
+    ".github/workflows/deploy.yml"
+  ],
+  "clientPaths": [
+    "src/content/pages/**",
+    "src/content/siteSettings/**",
+    "src/content/themeSettings/**",
+    "src/content/navbarSettings/**",
+    "src/content/footerSettings/**",
+    "src/content/logoSettings/**",
+    "src/content/postsSettings/**",
+    "src/content/calendarSettings/**",
+    "src/content/calloutSettings/**",
+    "src/content/posts/**",
+    "src/content/tags/**",
+    "public/uploads/**",
+    "README.md"
+  ]
+}

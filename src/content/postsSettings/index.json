@@ -1,0 +1,6 @@
+{
+  "title": "Posts",
+  "intro": "News and updates.",
+  "perPage": 10,
+  "excludeFromIndex": []
+}

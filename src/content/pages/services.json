@@ -1,0 +1,72 @@
+{
+  "title": "Services",
+  "blocks": [
+    {
+      "type": "hero",
+      "layout": "centered",
+      "background": "mesh",
+      "eyebrow": "What we do",
+      "title": "Services",
+      "subtitle": "A clear overview of what you offer. Replace these with your own services."
+    },
+    {
+      "type": "featureCards",
+      "title": "What we offer",
+      "columns": 3,
+      "cards": [
+        { "icon": "sparkle", "title": "Service one", "text": "Describe your first service here — what it is and who it helps." },
+        { "icon": "flask", "title": "Service two", "text": "Describe your second service here in a sentence or two." },
+        { "icon": "gift", "title": "Service three", "text": "Describe your third service here in a sentence or two." }
+      ]
+    },
+    {
+      "type": "steps",
+      "title": "How it works",
+      "layout": "horizontal",
+      "items": [
+        { "icon": "chat", "title": "Get in touch", "text": "Tell us what you need." },
+        { "icon": "checklist", "title": "We make a plan", "text": "A clear proposal, no surprises." },
+        { "icon": "flag", "title": "We deliver", "text": "On time and to a high standard." }
+      ]
+    },
+    {
+      "type": "pricing",
+      "title": "Simple pricing",
+      "intro": "Replace these with your own plans.",
+      "plans": [
+        {
+          "name": "Starter",
+          "price": "£0",
+          "period": "/mo",
+          "description": "To get going.",
+          "features": ["One page", "Community support", "Default web address"],
+          "cta": { "label": "Choose Starter", "href": "/contact" }
+        },
+        {
+          "name": "Pro",
+          "price": "£29",
+          "period": "/mo",
+          "description": "For growing needs.",
+          "features": ["Unlimited pages", "Priority support", "Custom domain"],
+          "featured": true,
+          "cta": { "label": "Choose Pro", "href": "/contact" }
+        },
+        {
+          "name": "Team",
+          "price": "£79",
+          "period": "/mo",
+          "description": "For organisations.",
+          "features": ["Everything in Pro", "Multiple editors", "Dedicated help"],
+          "cta": { "label": "Choose Team", "href": "/contact" }
+        }
+      ]
+    },
+    {
+      "type": "cta",
+      "title": "Ready to start?",
+      "text": "Get in touch and we will help you pick the right fit.",
+      "cta": { "label": "Contact us", "href": "/contact" },
+      "background": "mesh"
+    }
+  ]
+}

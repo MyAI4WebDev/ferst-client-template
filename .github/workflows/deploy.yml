@@ -1,0 +1,39 @@
+name: Deploy (Cloudflare Pages)
+
+# The canonical deploy workflow every client site carries. It builds the static
+# site and deploys it to the client's Cloudflare Pages project. The project name
+# is derived from the repo name the same way the platform derives it
+# (pagesProjectName: lowercase, non-alphanumeric -> '-', <=58 chars).
+#
+# It SKIPS on this template repo itself (the template is not a live site) and on
+# any repo without the Cloudflare secrets set.
+on:
+  push:
+    branches: [main, dev]   # enabled environments — add a branch to deploy it
+
+jobs:
+  deploy:
+    if: github.repository != 'MyAI4WebDev/ferst-client-template'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - name: Build
+        run: npm run build
+        env:
+          CF_PAGES_BRANCH: ${{ github.ref_name }}
+      - name: Derive Pages project name
+        id: proj
+        run: |
+          name="${{ github.event.repository.name }}"
+          slug=$(printf '%s' "$name" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g' | cut -c1-58 | sed -E 's/-+$//')
+          echo "name=${slug:-site}" >> "$GITHUB_OUTPUT"
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=${{ steps.proj.outputs.name }} --branch=${{ github.ref_name }}

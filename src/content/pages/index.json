@@ -1,0 +1,71 @@
+{
+  "title": "Home",
+  "align": "center",
+  "blocks": [
+    {
+      "type": "hero",
+      "layout": "centered",
+      "background": "mesh",
+      "eyebrow": "Welcome",
+      "title": "Welcome to Your Company",
+      "subtitle": "A beautiful, fast website that is ready to go — and easy to make your own. Start from this design, then change the words, colours and pages to fit you.",
+      "cta": { "label": "Explore the site", "href": "/about" }
+    },
+    {
+      "type": "marquee",
+      "items": ["Design-led", "Lightning fast", "Mobile ready", "Accessible", "Yours to edit", "Secure hosting"],
+      "speed": "normal"
+    },
+    {
+      "type": "featureCards",
+      "title": "Everything you need to look great online",
+      "intro": "A polished starting point, built from ready-made design blocks.",
+      "columns": 3,
+      "cards": [
+        { "icon": "sparkle", "title": "Design-led", "text": "Thoughtful typography, spacing and colour — professional from the first minute." },
+        { "icon": "flame", "title": "Fast by default", "text": "Built to load in an instant, on every device, everywhere." },
+        { "icon": "shield", "title": "Safe & reliable", "text": "Secure hosting keeps your site up and your visitors safe." },
+        { "icon": "people", "title": "Easy to manage", "text": "Update your words and images without touching any code." },
+        { "icon": "globe", "title": "Works everywhere", "text": "Looks right on phones, tablets and desktops out of the box." },
+        { "icon": "heart", "title": "Feels like you", "text": "Pick your colours and fonts and the whole site follows." }
+      ]
+    },
+    {
+      "type": "stats",
+      "title": "Built for the things that matter",
+      "background": "muted",
+      "columns": 3,
+      "items": [
+        { "value": "100", "label": "Design score", "description": "Polished, consistent and on-brand." },
+        { "value": "<1s", "label": "Load time", "description": "Fast on any connection." },
+        { "value": "24/7", "label": "Always on", "description": "Reliable hosting, always up." }
+      ]
+    },
+    {
+      "type": "tiles",
+      "title": "A few things you can do",
+      "intro": "Hover a card to see the interactive spotlight.",
+      "variant": "gradient",
+      "spotlight": true,
+      "columns": 3,
+      "tiles": [
+        { "icon": "star", "eyebrow": "Design", "title": "Change your look", "text": "Colours, fonts and style — with a live preview." },
+        { "icon": "document", "eyebrow": "Content", "title": "Add your pages", "text": "Tell your story with ready-made blocks." },
+        { "icon": "newspaper", "eyebrow": "News", "title": "Post updates", "text": "Share news and articles with your visitors." }
+      ]
+    },
+    {
+      "type": "testimonial",
+      "quote": "It looked professional from the very first day — and I could change everything myself.",
+      "author": "A happy site owner",
+      "role": "Replace with a real quote"
+    },
+    {
+      "type": "cta",
+      "title": "Make it yours",
+      "text": "Change the words, pick your colours and add your pages — start whenever you are ready.",
+      "cta": { "label": "Get in touch", "href": "/contact" },
+      "background": "mesh"
+    }
+  ]
+}

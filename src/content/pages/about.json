@@ -1,0 +1,55 @@
+{
+  "title": "About",
+  "blocks": [
+    {
+      "type": "hero",
+      "layout": "centered",
+      "background": "mesh",
+      "eyebrow": "About us",
+      "title": "About us",
+      "subtitle": "Tell your visitors who you are and what you care about. This is placeholder copy — replace it with your own story."
+    },
+    {
+      "type": "prose",
+      "text": "We started with a simple idea: that everyone deserves a website that looks great and is easy to keep up to date.\n\nReplace this text with your own — your mission, your history and what makes you different."
+    },
+    {
+      "type": "stats",
+      "background": "muted",
+      "columns": 3,
+      "items": [
+        { "value": "2020", "label": "Founded", "description": "The year it began." },
+        { "value": "5,000+", "label": "People helped", "description": "And counting." },
+        { "value": "12", "label": "Team members", "description": "Behind the scenes." }
+      ]
+    },
+    {
+      "type": "bento",
+      "title": "What we value",
+      "intro": "Edit these to match what matters to you.",
+      "items": [
+        { "size": "wide", "variant": "gradient", "icon": "heart", "title": "People first", "text": "Everything we do starts with the people we serve." },
+        { "size": "sm", "variant": "surface", "icon": "sparkle", "title": "Quality", "text": "We sweat the details." },
+        { "size": "sm", "variant": "filled", "icon": "globe", "title": "Openness", "text": "Clear and honest, always." },
+        { "size": "tall", "variant": "surface", "icon": "shield", "title": "Trust", "text": "We do what we say we will do." },
+        { "size": "wide", "variant": "surface", "icon": "flame", "title": "Momentum", "text": "We keep improving, week after week." }
+      ]
+    },
+    {
+      "type": "faq",
+      "title": "Frequently asked questions",
+      "items": [
+        { "question": "How do I change this page?", "answer": "Open the portal, choose this site, and either edit the design or request a content change." },
+        { "question": "Can I add more pages?", "answer": "Yes — add pages and posts, all built from the same ready-made blocks." },
+        { "question": "Can I use my own domain?", "answer": "Yes. Your site works on its default address straight away, and you can connect your own domain later." }
+      ]
+    },
+    {
+      "type": "cta",
+      "title": "Want to know more?",
+      "text": "Get in touch and we will be happy to help.",
+      "cta": { "label": "Contact us", "href": "/contact" },
+      "background": "accent"
+    }
+  ]
+}

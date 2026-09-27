@@ -1,0 +1,22 @@
+{
+  "name": "ferst-client-template",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The Ferst thin-client template — the single source every client site is provisioned from. Routing and the CMS config come from ferst-core; this repo holds only content DATA + a tiny scaffold.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && ferst-cms-config",
+    "preview": "astro preview",
+    "astro": "astro",
+    "check:thin": "ferst-check-thin"
+  },
+  "dependencies": {
+    "astro": "^5.0.0",
+    "ferst-core": "^0.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0"
+  }
+}

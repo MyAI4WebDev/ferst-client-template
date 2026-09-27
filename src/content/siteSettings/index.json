@@ -1,0 +1,14 @@
+{
+  "identity": {
+    "siteTitle": "Your Company",
+    "shortName": "Your Company",
+    "description": "Your Company — a Ferst site. Replace this with a short description of who you are.",
+    "location": ""
+  },
+  "contact": {
+    "phoneDisplay": "",
+    "phoneTel": "",
+    "email": "",
+    "facebookUrl": ""
+  }
+}

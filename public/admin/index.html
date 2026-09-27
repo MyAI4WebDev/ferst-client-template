@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Content editor</title>
+  </head>
+  <body>
+    <!-- Sveltia CMS — Git-backed editor. Reads ./config.yml (GENERATED at build by
+         ferst-cms-config; not committed to this repo). Writes go through the
+         platform git-proxy (see the generated config.yml backend). -->
+    <script src="https://unpkg.com/@sveltia/cms@0.107/dist/sveltia-cms.js" type="module"></script>
+    <script>
+      // Client-facing brand: the CMS backend is GitHub, but editors sign in with
+      // their Ferst account (our auth popup). Relabel the sign-in button so it
+      // never says "GitHub". Best-effort text swap; a wording change just no-ops.
+      (function () {
+        var relabel = function () {
+          document.querySelectorAll('button, a').forEach(function (el) {
+            var t = (el.textContent || '').trim();
+            if (t === 'Sign in with GitHub' || t === 'Login with GitHub') {
+              el.textContent = 'Sign in with Ferst';
+            }
+          });
+        };
+        try { new MutationObserver(relabel).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
+        document.addEventListener('DOMContentLoaded', relabel);
+      })();
+    </script>
+  </body>
+</html>

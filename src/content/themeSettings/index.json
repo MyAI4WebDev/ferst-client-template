@@ -1,0 +1,13 @@
+{
+  "brand": "#0E4D4A",
+  "ink": "#0C2123",
+  "surface": "#FFFFFF",
+  "corners": "rounded",
+  "elevation": "raised",
+  "stroke": "on",
+  "fields": "boxed",
+  "darkDepth": 0.21,
+  "darkChroma": 0.05,
+  "darkOverrides": { "ground": "", "text": "", "accent": "" },
+  "fonts": { "heading": "", "body": "", "display": "" }
+}
