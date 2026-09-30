@@ -9,11 +9,12 @@
     "build": "astro build && ferst-cms-config",
     "preview": "astro preview",
     "astro": "astro",
-    "check:thin": "ferst-check-thin"
+    "check:thin": "ferst-check-thin",
+    "update": "ferst-update"
   },
   "dependencies": {
     "astro": "^5.0.0",
-    "ferst-core": "^0.5.0"
+    "ferst-core": "^0.6.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

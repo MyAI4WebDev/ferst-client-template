@@ -2,6 +2,24 @@
 
 Two channels carry fixes to client sites. Pick the channel by **what changed**.
 
+## 0. The one-command way: `npm run update`
+
+`npm run update` (the `ferst-update` bin, from `ferst-core`) automates both channels below:
+it reads `ferst-template.json` (`upstream` + `ownedPaths`), fetches the template, overwrites
+the owned scaffold paths (**never client data**), installs `ferst-core@latest`, then runs
+`build` + `check:thin`. This is the routine way to keep a site current — a coding agent runs
+it first thing (see `CLAUDE.md`).
+
+```sh
+npm install && npm run update      # sync scaffold + bump to latest core, then verify
+# npm run update -- --dry-run      # preview what would change, write nothing
+# npm run update -- --no-core      # scaffold sync only (skip the ferst-core bump)
+```
+
+The authoritative owned-path list is `ferst-template.json` `ownedPaths` (the hardcoded list in
+the manual example below is illustrative and may lag). The sections below explain what the
+command does under the hood, and the manual path if you ever need it.
+
 ## 1. Engine fixes — the common case (no repo touched)
 
 A change to a component, layout, route, style, theming or the CMS schema lives in
