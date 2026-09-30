@@ -53,7 +53,7 @@ git fetch upstream
 git checkout upstream/main -- \
   ferst-template.json package.json CLAUDE.md \
   src/content/config.ts public/admin/index.html \
-  .github/workflows/unit.yml .github/workflows/deploy.yml
+  .github/workflows/unit.yml .github/workflows/smoke.yml
 # commit only if something actually changed:
 git commit -m "chore: sync scaffold to ferst-client-template $(git rev-parse --short upstream/main)" || echo "already current"
 git push origin <policy-branch>
@@ -66,12 +66,34 @@ git push origin <policy-branch>
 - **Idempotent**: re-running when already current changes nothing.
 
 > Do **not** overwrite `clientPaths` — those are the client's own data. Do **not** overwrite
-> `seedPaths` either (`astro.config.mjs`, `tsconfig.json`, `.gitignore`): they are seeded once,
-> then a client may legitimately customise them — a retrofitted site's bespoke legacy-URL
-> redirects live in `astro.config.mjs`, and force-syncing would silently 404 them. If a
-> *content-shape* change is ever needed (e.g. a new required settings field), that is a data
-> migration, handled deliberately, not a scaffold overwrite. If a `seedPath` file itself must
-> change fleet-wide, that is a deliberate per-client edit, not a blanket overwrite.
+> `seedPaths` either (`astro.config.mjs`, `tsconfig.json`, `.gitignore`, the opt-in
+> `deploy.yml`, and `public/_redirects`): they are seeded once, then a client may legitimately
+> customise them, and force-syncing would clobber that. If a *content-shape* change is ever
+> needed (e.g. a new required settings field), that is a data migration, handled deliberately,
+> not a scaffold overwrite. If a `seedPath` file itself must change fleet-wide, that is a
+> deliberate per-client edit, not a blanket overwrite.
+
+## Legacy URLs (migrated sites)
+
+A site migrated onto Ferst keeps its old URLs working with **`public/_redirects`** —
+Cloudflare Pages' native redirect table (real HTTP 301s at the edge). One rule per line,
+`FROM TO [STATUS]`; splats/placeholders are supported. This is the **only** home for legacy
+redirects — never `astro.config.mjs` — which keeps the build config identical across every
+client, so `astro.config.mjs` stays a clean `seedPath`. `public/_redirects` ships as a
+commented template; a migrated site fills in its rules, a brand-new site needs none.
+
+There is deliberately **no legacy-site runtime here** — we do not scrape, host or run old
+sites from a Ferst client repo; a redirect table is the whole legacy-content procedure.
+
+## Testing (what runs where)
+
+Client repos carry **no test suite** — `npm run build` (validates content against the engine
+`pageSchema`) + `npm run check:thin` are the whole per-client gate, run by
+`.github/workflows/unit.yml`. The engine (`ferst-core`) is unit/integration/E2E-tested in its
+own repo; the assembled thin-client journeys are E2E-tested once, centrally, by **this
+template's `e2e/` suite** (playwright-bdd; template-only, never seeded into clients). The
+opt-in `smoke` workflow is a live-site health check, not a test suite. See `CLAUDE.md`
+("Testing") — an agent working in a client repo must not add tests there.
 
 ## Retrofitting an existing site onto this template
 
@@ -80,6 +102,8 @@ For a site created before this template (e.g. an early client):
 1. Bump it to `ferst-core@^0.5.0`.
 2. Switch `astro.config.mjs` to `integrations: [ferst()]` and **delete** its now
    package-owned page files (`src/pages/*`).
-3. Adopt `ferst-cms-config` in the build script; stop committing `public/admin/config.yml`.
-4. Move its home content into `src/content/pages/index.json` (retire `src/data/home.json`).
-5. Run the scaffold overwrite above; verify `npm run build` and `npm run check:thin` pass.
+3. Move any legacy-URL `redirects` out of `astro.config.mjs` into `public/_redirects`
+   (see "Legacy URLs" above), so `astro.config.mjs` matches the template's `seedPath`.
+4. Adopt `ferst-cms-config` in the build script; stop committing `public/admin/config.yml`.
+5. Move its home content into `src/content/pages/index.json` (retire `src/data/home.json`).
+6. Run the scaffold overwrite above; verify `npm run build` and `npm run check:thin` pass.

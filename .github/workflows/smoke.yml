@@ -1,0 +1,54 @@
+name: smoke (live health)
+
+# OPT-IN live-site health check. An ownedPath (every client carries it), but INERT
+# until a client opts in by setting the repo variable SMOKE_URL (Settings → Secrets
+# and variables → Actions → Variables). It is the ONE client-specific check worth
+# running per site — a cheap net for "unknown unknowns": a bad content save, a broken
+# deploy, an expired cert, a blank page. It does NOT replace the build gate (unit.yml)
+# or the fleet journey suite (the template's e2e); it just confirms the LIVE site is up.
+#
+# Config (repo Variables, not secrets — a URL/marker isn't secret):
+#   SMOKE_URL     the live site URL to probe, e.g. https://www.example.org   (required to enable)
+#   SMOKE_EXPECT  optional literal string that must appear on the page (e.g. the site name)
+#
+# The platform deploys via Cloudflare Pages (async), so on push we retry for a few
+# minutes to let the new deploy go live before asserting.
+on:
+  push:
+    branches: [main, dev]
+  schedule:
+    - cron: '17 6 * * *'   # daily catch-all, independent of pushes
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    env:
+      URL: ${{ vars.SMOKE_URL }}
+      EXPECT: ${{ vars.SMOKE_EXPECT }}
+    steps:
+      - name: Enabled?
+        run: |
+          if [ -z "${URL}" ]; then
+            echo "SMOKE_URL not set — the live smoke is opt-in; skipping."
+          fi
+      - name: Probe the live site
+        if: env.URL != ''
+        run: |
+          set -uo pipefail
+          echo "Probing ${URL} ..."
+          ok=0
+          for i in $(seq 1 20); do
+            code=$(curl -sS -o /tmp/body.html -w '%{http_code}' -L "${URL}" || echo "000")
+            if [ "$code" = "200" ]; then ok=1; echo "HTTP 200 on attempt $i."; break; fi
+            echo "attempt $i: HTTP $code — retrying in 15s (letting the Cloudflare Pages deploy finish)"
+            sleep 15
+          done
+          if [ "$ok" != "1" ]; then echo "Site never returned HTTP 200." >&2; exit 1; fi
+          if ! grep -qi '</html>' /tmp/body.html; then
+            echo "Response is not a complete HTML document (blank/partial page?)." >&2; exit 1
+          fi
+          if [ -n "${EXPECT}" ] && ! grep -qF "${EXPECT}" /tmp/body.html; then
+            echo "Expected marker not found on the page: ${EXPECT}" >&2; exit 1
+          fi
+          echo "Smoke OK — live site is up and serving a complete page."

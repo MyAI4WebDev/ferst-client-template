@@ -1,37 +1,52 @@
-name: Deploy (Cloudflare Pages)
+name: deploy (cloudflare pages)
 
-# The canonical deploy workflow every client site carries. It builds the static
-# site and deploys it to the client's Cloudflare Pages project. The project name
-# is derived from the repo name the same way the platform derives it
-# (pagesProjectName: lowercase, non-alphanumeric -> '-', <=58 chars).
-#
-# It SKIPS on this template repo itself (the template is not a live site) and on
-# any repo without the Cloudflare secrets set.
+# OPT-IN, Actions-based deploy for a self-managed client that prefers to deploy
+# from GitHub Actions. This is a seedPath, NOT force-synced: the platform's managed
+# clients deploy via Cloudflare Pages git-integration (the repo connected to a CF
+# Pages project) and simply DELETE this file. It SELF-SKIPS whenever the Cloudflare
+# secrets are absent, so it stays inert — never a red X — until a client opts in by
+# setting CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID.
 on:
   push:
     branches: [main, dev]   # enabled environments — add a branch to deploy it
+  workflow_dispatch:
 
 jobs:
   deploy:
-    if: github.repository != 'MyAI4WebDev/ferst-client-template'
     runs-on: ubuntu-latest
+    # secrets can't be read in a job-level `if`, so gate each step on this env flag.
+    env:
+      HAS_CF: ${{ secrets.CLOUDFLARE_API_TOKEN != '' && secrets.CLOUDFLARE_ACCOUNT_ID != '' }}
     steps:
+      - name: Deploy configured?
+        run: |
+          if [ "${HAS_CF}" != "true" ]; then
+            echo "No Cloudflare secrets set — skipping Actions deploy."
+            echo "(This repo likely deploys via Cloudflare Pages git-integration; that is fine.)"
+          fi
       - uses: actions/checkout@v4
+        if: env.HAS_CF == 'true'
       - uses: actions/setup-node@v4
+        if: env.HAS_CF == 'true'
         with:
           node-version: 20
       - run: npm install
+        if: env.HAS_CF == 'true'
       - name: Build
+        if: env.HAS_CF == 'true'
         run: npm run build
         env:
           CF_PAGES_BRANCH: ${{ github.ref_name }}
       - name: Derive Pages project name
+        # Matches the platform's derivation: lowercase, non-alphanumeric -> '-', <=58 chars.
+        if: env.HAS_CF == 'true'
         id: proj
         run: |
           name="${{ github.event.repository.name }}"
           slug=$(printf '%s' "$name" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g' | cut -c1-58 | sed -E 's/-+$//')
           echo "name=${slug:-site}" >> "$GITHUB_OUTPUT"
       - name: Deploy to Cloudflare Pages
+        if: env.HAS_CF == 'true'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}

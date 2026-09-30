@@ -1,25 +1,81 @@
-name: Checks
+name: checks
 
-# Runs on every client site AND on this template repo itself: the thin-client
-# guard (a client must DEPEND on ferst-core, never copy it) plus a real build.
+# The canonical CI every Ferst thin client carries (an ownedPath — force-synced
+# from the template by `npm run update`; do not hand-edit it in a client). Two
+# fast, secret-free checks that are safe on every repo including forks:
+#   1. the single-source guard — a client must DEPEND on ferst-core, never copy it;
+#   2. a real build — which is ALSO the content test: `npm run build` validates
+#      every page's JSON against the engine's pageSchema and fails on bad data.
+# A thin client is DATA on top of a released, already-tested engine, so this is the
+# whole per-client test surface — see CLAUDE.md "Testing". Journeys are proven once,
+# centrally, by the template's e2e suite, never re-implemented here.
+#
+# Uses `npm install` (not `npm ci`): a thin client has no committed lockfile, and
+# reproducibility comes from the ferst-core version pin + the ferst-site.json drift
+# stamp, not a lock (which `npm run update` rewrites on every core bump anyway).
+
 on:
-  push:
   pull_request:
+  push:
+    # Content-only pushes (CMS editor saves, media uploads) can't change build
+    # config or page code — they can't break these jobs in any way Cloudflare's
+    # own build wouldn't also catch. Skip them. A mixed push still runs.
+    paths-ignore:
+      - 'src/content/**'
+      - 'public/uploads/**'
+  workflow_dispatch:
 
 jobs:
-  checks:
+  guard:
     runs-on: ubuntu-latest
+    concurrency:
+      group: guard-${{ github.ref }}
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
       - run: npm install
-      - name: Thin-client guard (no copies of ferst-core in src/)
+      - name: Single-source guard (no copies of ferst-core in src/)
         run: npx --no-install ferst-check-thin
+
+  build:
+    # Build smoke: catches Zod/pageSchema breakages, content-collection misconfig
+    # and broken imports before they reach Cloudflare's build.
+    runs-on: ubuntu-latest
+    concurrency:
+      group: build-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
       - name: Build (astro + generated CMS config)
         run: npm run build
         env:
           # GITHUB_REPOSITORY is set by Actions; ferst-cms-config reads it for the
           # CMS backend repo. CF_PAGES_BRANCH stamps the CMS backend branch.
           CF_PAGES_BRANCH: ${{ github.ref_name }}
+      - name: Verify the universal build artifacts exist
+        # Only artifacts EVERY thin client always produces — no client-specific
+        # page assertions (those would break the moment a client renames a page,
+        # and per-page checks aren't a thin client's job).
+        run: |
+          set -euo pipefail
+          missing=()
+          for path in \
+            dist/index.html \
+            dist/admin/index.html \
+            dist/admin/config.yml
+          do
+            [ -f "$path" ] || missing+=("$path")
+          done
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "Build smoke failed — missing expected output:" >&2
+            printf '  - %s\n' "${missing[@]}" >&2
+            exit 1
+          fi
+          echo "Build smoke OK — home, CMS admin and generated CMS config all present."

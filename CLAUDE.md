@@ -35,6 +35,29 @@ read-only). So:
 (A site may carry one pre-existing bespoke `.astro` route, e.g. `src/pages/cookie-policy.astro`
 — a legacy one-off. Do not add more like it.)
 
+## Testing — do NOT add tests to this repo
+This repo is **data on top of a released, already-tested engine**, so it needs no test
+suite of its own and you must **not create one**:
+
+- **Do NOT** add unit, integration or end-to-end tests here; do not add Vitest,
+  Playwright, `playwright-bdd`, `.feature` files, a `tests/` or `e2e/` directory, or any
+  test dependency, config, or CI workflow. Adding test tooling to a client repo is
+  off-strategy and will be rejected in review.
+- **The build IS the test.** `npm run build` validates every page against the engine's
+  `pageSchema` (bad data fails the build); `npm run check:thin` proves no engine code was
+  copied in. Those two — nothing more — are this repo's whole correctness gate, and they
+  already run in CI (`.github/workflows/unit.yml`).
+- **Why:** the components, routes, schema and rendering are the `ferst-core` engine's
+  code, tested in the engine's own repo; the assembled thin-client journeys (home, nav,
+  pages, blog, CMS admin) are tested once, centrally, by the template's e2e suite. A
+  per-site suite would duplicate that with zero added safety, real maintenance cost, and
+  it would drift.
+- If you believe a genuine behaviour is untested, that is an **engine or template** change
+  — **stop and report it**; do not build a test here.
+
+(The `smoke` workflow shipped in `.github/workflows/` is a live-site health check, not a
+test suite; it stays inert unless the platform sets its `SMOKE_URL` variable.)
+
 ## How pages work
 A page is an ordered list of **typed blocks**, stored as one JSON file:
 

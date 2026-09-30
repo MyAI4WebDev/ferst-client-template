@@ -1,0 +1,53 @@
+name: e2e
+
+# Template-level E2E — the "standard client contract" (docs/CLIENT-TEMPLATE-ARCHITECTURE.md).
+# It builds + previews THIS template and runs the shared skeleton journeys (home, nav,
+# a content page, the blog, the CMS admin entry) with Playwright + playwright-bdd. It runs
+# once per TEMPLATE change and is deliberately NOT one of the per-client `ownedPaths`, so it
+# never propagates into a provisioned client repo (those carry only the fast `checks` CI).
+#
+# Uses `npm install` (not `npm ci`): a thin client has no committed root lockfile.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # Parent template deps — the Playwright webServer builds + previews ../ from these.
+      - name: Install template dependencies
+        run: npm install
+      # E2E deps live here, in their own node_modules — never in the root package.json.
+      - name: Install e2e dependencies
+        working-directory: e2e
+        run: npm install
+      - name: Install Playwright browser
+        working-directory: e2e
+        run: npx playwright install --with-deps chromium
+      - name: Run E2E (build + preview the template, then the journeys)
+        working-directory: e2e
+        run: npm run test:e2e
+        env:
+          # ferst-cms-config reads GITHUB_REPOSITORY for the CMS backend repo; Actions
+          # sets it. Stamp the generated CMS config's backend branch from the ref too.
+          CF_PAGES_BRANCH: ${{ github.ref_name }}
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: e2e/playwright-report/
+          retention-days: 7
+          if-no-files-found: ignore

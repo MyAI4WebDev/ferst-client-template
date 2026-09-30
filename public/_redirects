@@ -1,0 +1,19 @@
+# Cloudflare Pages redirects — one rule per line:  FROM  TO  [STATUS]
+#
+# A MIGRATED site lists its old URLs here so existing bookmarks, emailed links and
+# indexed search results keep working after the move to Ferst. These are real HTTP
+# 301s at the edge (Cloudflare Pages), NOT page code — this file is your site's data,
+# edit it freely. A brand-new site needs none of these; leave the examples commented.
+#
+# This is the standard home for legacy redirects (never astro.config.mjs), which keeps
+# the build config identical across every client. See docs/UPDATING.md → "Legacy URLs".
+#
+# Examples (uncomment + adapt to your old URLs):
+#   /old-news/            /posts/                     301
+#   /newsletter/          /posts/tag/newsletter/      301
+#   /volunteer/           /about/get-involved/        301
+#
+# Splats/placeholders are supported, e.g.:
+#   /blog/*               /posts/:splat               301
+#
+# Docs: https://developers.cloudflare.com/pages/configuration/redirects/
