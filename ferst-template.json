@@ -1,19 +1,21 @@
 {
-  "$comment": "Ownership manifest for the Ferst thin-client. `upstream` is where scaffold updates come from (this template); `ownedPaths` are TEMPLATE-owned (synced from upstream by `npm run update` / `ferst-update`, never hand-edited in a client); `clientPaths` are the client's own data (never touched by an update); `coreRange` is the ferst-core version this scaffold targets. See docs/UPDATING.md and CLAUDE.md.",
-  "templateVersion": "1.1.0",
+  "$comment": "Ownership manifest for the Ferst thin-client. `upstream` = where scaffold updates come from (this template). `ownedPaths` = TEMPLATE-owned, force-synced from upstream on every `npm run update` (never hand-edit them in a client). `seedPaths` = scaffold copied ONCE at seed time but NOT force-synced, because a client may legitimately customise them (e.g. astro.config redirects, .gitignore additions). `clientPaths` = the client's own data (generated at seed, never touched by an update). `coreRange` = the ferst-core version this scaffold targets. See docs/UPDATING.md and CLAUDE.md.",
+  "templateVersion": "1.2.0",
   "upstream": "https://github.com/MyAI4WebDev/ferst-client-template.git",
   "coreRange": "^0.6.0",
   "ownedPaths": [
     "ferst-template.json",
     "package.json",
-    "astro.config.mjs",
-    "tsconfig.json",
-    ".gitignore",
     "CLAUDE.md",
     "src/content/config.ts",
     "public/admin/index.html",
     ".github/workflows/unit.yml",
     ".github/workflows/deploy.yml"
+  ],
+  "seedPaths": [
+    "astro.config.mjs",
+    "tsconfig.json",
+    ".gitignore"
   ],
   "clientPaths": [
     "ferst-site.json",

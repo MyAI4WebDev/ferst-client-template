@@ -35,11 +35,11 @@ Nothing in a client repo needs editing. This is where the vast majority of front
 ## 2. Scaffold fixes — rare (git upstream overwrite)
 
 A change to a file **this repo owns** (`ownedPaths` in `ferst-template.json`) — e.g. the
-Sveltia loader, a workflow, `astro.config.mjs` — must reach existing client repos. Use git as
-the vehicle, but **never a three-way merge**: the CMS bot commits to client repos continuously,
-so merging histories races live content and conflicts. Instead **overwrite the owned paths to
-this template's version**, which is conflict-free by construction (it only touches files the
-client never edits).
+Sveltia loader, a workflow, `src/content/config.ts` — must reach existing client repos. Use git
+as the vehicle, but **never a three-way merge**: the CMS bot commits to client repos
+continuously, so merging histories races live content and conflicts. Instead **overwrite the
+owned paths to this template's version**, which is conflict-free by construction (it only
+touches files the client never edits).
 
 Per client (the platform orchestrates this centrally, per client or in waves):
 
@@ -51,7 +51,7 @@ git remote add upstream https://github.com/MyAI4WebDev/ferst-client-template.git
 git fetch upstream
 # overwrite ONLY the template-owned paths (from ferst-template.json ownedPaths):
 git checkout upstream/main -- \
-  package.json astro.config.mjs tsconfig.json .gitignore \
+  ferst-template.json package.json CLAUDE.md \
   src/content/config.ts public/admin/index.html \
   .github/workflows/unit.yml .github/workflows/deploy.yml
 # commit only if something actually changed:
@@ -59,15 +59,19 @@ git commit -m "chore: sync scaffold to ferst-client-template $(git rev-parse --s
 git push origin <policy-branch>
 ```
 
-- **Conflict-free**: only `ownedPaths` are overwritten; client content (`clientPaths`) is never
-  touched.
+- **Conflict-free**: only `ownedPaths` are overwritten; client content (`clientPaths`) and
+  seed-once files (`seedPaths`) are never touched.
 - **Self-tracking**: the consumed template commit is recorded in the commit message, so "is
   this client current?" is answerable from `git log`.
 - **Idempotent**: re-running when already current changes nothing.
 
-> Do **not** overwrite `clientPaths` — those are the client's own data. If a *content-shape*
-> change is ever needed (e.g. a new required settings field), that is a data migration, handled
-> deliberately, not a scaffold overwrite.
+> Do **not** overwrite `clientPaths` — those are the client's own data. Do **not** overwrite
+> `seedPaths` either (`astro.config.mjs`, `tsconfig.json`, `.gitignore`): they are seeded once,
+> then a client may legitimately customise them — a retrofitted site's bespoke legacy-URL
+> redirects live in `astro.config.mjs`, and force-syncing would silently 404 them. If a
+> *content-shape* change is ever needed (e.g. a new required settings field), that is a data
+> migration, handled deliberately, not a scaffold overwrite. If a `seedPath` file itself must
+> change fleet-wide, that is a deliberate per-client edit, not a blanket overwrite.
 
 ## Retrofitting an existing site onto this template
 
