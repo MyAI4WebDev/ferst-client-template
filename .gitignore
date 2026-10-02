@@ -25,3 +25,6 @@ npm-debug.log*
 # git-proxy straight to the configured branch). Local dev edits must not pollute.
 src/content/posts/
 public/uploads/
+
+# migrate-site skill workspace (a snapshot of the old site) — temporary, never committed
+.migration/

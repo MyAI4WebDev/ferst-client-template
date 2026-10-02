@@ -20,9 +20,10 @@ owned paths (**your content is never touched**), installs `ferst-core@latest`, a
 not build on a stale or broken base. (`--dry-run` previews; `--no-core` syncs scaffold only.)
 
 ## Rebuilding an existing website from a URL
-If you are asked to recreate an existing site (you're given its URL), follow
-**`docs/MIGRATE-FROM-URL.md`** step by step: inventory the old site, rebuild it from the block
-palette, keep or redirect its URLs, and finish with a `MIGRATION-REPORT.md` that lists
+Use the **`migrate-site` skill** (`.claude/skills/migrate-site/`). It snapshots the old site
+into a git-ignored `.migration/` folder and plans every URL with the `site-inventory` agent. It
+then builds pages in parallel with `page-builder` agents, audits coverage with the
+`migration-auditor` agent, and finishes with a pull request whose `MIGRATION-REPORT.md` lists
 everything **undeliverable** with the current blocks. Never write code to fill a gap. Report it.
 
 ## The one rule that must not be broken
