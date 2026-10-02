@@ -116,6 +116,11 @@ Rules:
 - **One section = one block** where possible. Don't cram several sections into one `prose`.
 - When unsure of a block's fields, copy the matching example from `examples/` and adapt it.
 - After each few pages, run `npm run build`. It validates every page against the schema.
+- **Clear out the starter content.** A new site starts with placeholder pages
+  (`about`, `services`, `contact`, plus the home page) and a sample post (`*-welcome.md`).
+  Replace them with the old site's content, and delete any placeholder page or post that
+  has no counterpart on the old site, along with its navigation links. No placeholder copy
+  may survive.
 
 ## 5. URLs: keep them, or redirect them
 
