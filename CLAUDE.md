@@ -19,6 +19,12 @@ owned paths (**your content is never touched**), installs `ferst-core@latest`, a
 `build` + `check:thin`. If it reports a failure, fix or surface that before continuing — do
 not build on a stale or broken base. (`--dry-run` previews; `--no-core` syncs scaffold only.)
 
+## Rebuilding an existing website from a URL
+If you are asked to recreate an existing site (you're given its URL), follow
+**`docs/MIGRATE-FROM-URL.md`** step by step: inventory the old site, rebuild it from the block
+palette, keep or redirect its URLs, and finish with a `MIGRATION-REPORT.md` that lists
+everything **undeliverable** with the current blocks. Never write code to fill a gap. Report it.
+
 ## The one rule that must not be broken
 **Author data, not code.** All routing, layouts, components, page + blog rendering, the
 block schema and theming live in the `ferst-core` package (installed in `node_modules`,
