@@ -86,6 +86,7 @@ Rules:
   page with a small notice box; place notices after the intro.
 - **One section = one block** where possible. Don't cram several sections into one `prose`.
 - When unsure of a block's fields, copy the matching example from `examples/` and adapt it.
+- **Icons** must be names from `node_modules/ferst-core/lib/icons.ts`. An unknown name fails the build and lists the valid ones. Names describe shapes, not subjects (`steeple`, `chalice`, `shell`), so pick the shape that fits.
 - After each few pages, run `npm run build`. It validates every page against the schema.
 - **Clear out the starter content.** A new site starts with placeholder pages
   (`about`, `services`, `contact`, plus the home page) and a sample post (`*-welcome.md`).
