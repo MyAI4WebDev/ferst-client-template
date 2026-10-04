@@ -36,6 +36,12 @@ Use the template in `.claude/skills/migrate-site/reference.md` (*Report template
 - **Follow-ups for a human:** forms to wire, content to confirm, archive beyond the cut-off,
   oversize media.
 
+## Engine requests
+For each undeliverable item that needs an **engine change** (a missing block, field or
+behaviour; not a content or human follow-up), make sure a `core-request` issue exists. Follow
+*Asking the engine for something* in `CLAUDE.md`: check for an existing one first, then open
+one per request. Add the issue number to that row of the report.
+
 ## Return (as your final message)
 - **CLEAN** or **NOT CLEAN**.
 - For NOT CLEAN, the fixable defects as a numbered list: file plus what to change, for the main

@@ -40,7 +40,33 @@ read-only). So:
   This repo is deliberately thin — hand-coding a page here fights the platform and is caught
   by `npm run check:thin`.
 - If a design needs a **block type that does not exist** in the palette, **stop and report
-  it** — that is an engine change, not something to build in this repo.
+  it**: that is an engine change, not something to build in this repo. Report it as a
+  **core request issue** (below).
+
+## Asking the engine for something: `core-request` issues
+When the site needs something the engine can't do (a missing block, field, layout fix or
+behaviour), open a **GitHub issue in this repo** labelled `core-request`. The Ferst core
+team collects them across all client repos. Don't use artifacts, docs pages or notes in the
+repo for this: issues are what the core team reads.
+
+1. **Check first:** `gh issue list --label core-request --state open`. If the request is
+   already there, add a comment with the new evidence rather than opening a duplicate.
+2. **One issue per request**, created with
+   `gh label create core-request --color 8a6a1f 2>/dev/null; gh issue create --label core-request --title "Core request: <short ask>" --body-file <file>`.
+   Put the priority in the body.
+3. **Body:**
+   - **Priority:** high / medium / low, and why.
+   - **What's needed**, in a sentence.
+   - **Where:** pages and paths.
+   - **Today's workaround:** the blocks used instead, as a sequence like
+     `hero → heading → list → heading → list …`, or what had to be left out.
+   - **Proposed engine change:** a field, a recipe, a CSS fix.
+   - **ferst-core version** (`npm ls ferst-core`).
+4. If `gh` isn't available, use the GitHub tools the session has. If there are none, list
+   the requests in your final message and in the PR description, and say they still need
+   filing.
+5. Once a released ferst-core version delivers a request, use it, then close the issue with
+   a comment naming the version.
 
 (A site may carry one pre-existing bespoke `.astro` route, e.g. `src/pages/cookie-policy.astro`
 — a legacy one-off. Do not add more like it.)
