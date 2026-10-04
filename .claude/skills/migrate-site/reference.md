@@ -50,7 +50,7 @@ Map each section of the old page to the closest block. Typical matches:
 | Paragraphs of text | `prose` (blank line = new paragraph; inline `[links](url)`, `**bold**`, `*italic*`, `- ` lists), `heading` for sub-headings |
 | A single image | `image` |
 | An image that links somewhere (poster, badge, partner logo) | `tiles` with `variant: "image"`, tile `{ href, image: { src, alt } }`: shown whole, the alt names the link |
-| A video (YouTube / Vimeo, incl. a live stream) | `video` (consent-gated). A header video: `hero` `layout: "media"` with `media.video` (a file, or a YouTube/Vimeo link) and `poster` |
+| A video (YouTube / Vimeo, incl. a live stream) | `video` (consent-gated; a channel's live page loads on demand and links to its streams; `note` for the schedule). A header video: `hero` `layout: "media"` with `media.video` (a file, or a YouTube/Vimeo link) and `poster` |
 | Rotating header images | `hero` `layout: "media"` with `media.images: [...]` |
 | PDFs and documents to download | `documents` (opens in a new tab: never an in-page viewer); dated, repeating issues → posts (see *The Ferst model*) |
 | Several images | `gallery`, or `mediaCards` if they have captions or links |
@@ -62,6 +62,8 @@ Map each section of the old page to the closest block. Typical matches:
 | "Get in touch" strip, button rows | `cta`, `banner`, `button` |
 | Important notice, alert | `notice`, `announcement` |
 | A contact's phone / email / website as a row (no full card needed) | `linkRow` (title, links, optional intro + note) |
+| Weekly times for one or more places (service times, opening hours, sessions) | `timetable` (a card per place, empty days dropped; `layout: "table"` to compare). Never nested sections + tables. |
+| A prayer, verse or poem | `quote`: line breaks are kept |
 | A policy, terms, conditions or other legal text | `document`: one block, clauses numbered automatically, contents list, `updated` date. Don't type numbers into headings. |
 | Address, opening times, contact details | `contactCard` (subtitle and note take links + line breaks; items take line breaks), `locations` |
 | Map | `mapEmbed` |
