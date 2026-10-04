@@ -23,6 +23,11 @@ Read:
 - `node_modules/ferst-core/examples/*.ts`, for what each block looks like at its best.
 
 ## Look for, in this order
+0. **The principles in `CLAUDE.md`, "Principles of a modern Ferst site".** Move reference
+   pages (policies, safeguarding, documents, forms) out of the menu into footer columns.
+   Give recurring times one `timetable` page, and make every page that repeated them link
+   there. Move dated events out of page text into the report's *Calendar to set up* list,
+   and link those pages to `/calendar`.
 1. **Dated, repeating things kept as a page of links** (newsletters, bulletins, minutes,
    notices, magazines). Make each one a **post** in the blog flow: one Markdown file per
    issue with its date, a `summary`, a tag (e.g. `newsletter`) and the PDF as `attachment`.

@@ -170,6 +170,9 @@ by page; a Ferst site is built from a few strong patterns. Apply them:
 | One page about unrelated subjects | **Split it**, one page per subject. |
 | Long unbroken text | Structure from its own content: `heading`s, `list`s, `accordion` / `faq` for reference material, `steps` for processes. |
 | Sidebar page lists, "click here" links | Navigation (≤ ~7 top items, grouped by what visitors want) and real link text or buttons. |
+| Policies, safeguarding, privacy, terms, complaints, reports, minutes, forms in the main menu (often a big dropdown) | **Footer columns**: `footerSettings.groups` headed *Policies / Documents / Forms*. The main menu keeps only what visitors come to do. |
+| The same service or opening times written on several pages | **One** `timetable` page (e.g. `/times`) linked from the menu; every other page links to it ("See service times"). |
+| Dated events in page text (a diary, "First Communion 14 May", a concert) | The **calendar** (`/calendar`, Events module). Pages link to it; list each event under *Calendar to set up* in the report. Never copy dates into pages. |
 | Undated reference files (policies, forms) | A `documents` block on the relevant page. |
 | A notice at the very top | Hero → lead paragraph → then the `notice`. |
 | The same kind of content styled differently on each page | One pattern site-wide (every group a `mediaCards` card, every contact a `contactCard`). |
@@ -197,6 +200,10 @@ Engine: ferst-core <version> · Date: <date>
 
 ## Restructured for Ferst
 - <what → why, one line each (from the content-architect)>
+
+## Calendar to set up
+| Date | Time | Event | Place | Repeats | Source page |
+|---|---|---|---|---|---|
 
 ## Undeliverable (needs a decision or an engine change)
 | Page | What | Why | Closest used / suggestion |

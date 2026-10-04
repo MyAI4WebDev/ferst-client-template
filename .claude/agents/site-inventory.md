@@ -55,3 +55,11 @@ Rules:
    its **new** URL.
 4. Anything risky you noticed: JavaScript-rendered pages, forms, embeds, members areas,
    shops.
+
+## Navigation and footer (part of your return)
+Propose a **menu of at most about seven items** named for what visitors come to do, and
+**footer columns** (`Policies / Documents / Forms`) for every reference page: safeguarding,
+policies, privacy, terms, complaints, reports, minutes, forms. Name the **one times page**
+for recurring times. List pages that carry **dated events**, since their dates go to the
+calendar, not the page. Follow *Principles of a modern Ferst site* in `CLAUDE.md`.
+

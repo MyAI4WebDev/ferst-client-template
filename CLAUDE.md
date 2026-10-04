@@ -29,6 +29,25 @@ finishes with a pull request whose `MIGRATION-REPORT.md` lists what was restruct
 everything **undeliverable** with the current blocks. **Carry the content, not the old
 design.** Never write code to fill a gap. Report it.
 
+## Principles of a modern Ferst site (apply always, not only when migrating)
+1. **A short, clear menu.** At most about seven top-level items, named for what visitors
+   come to do (*Visit · Times · Sacraments · Parish life · News · Contact*). No deep nested
+   menus.
+2. **Reference pages live in the footer.** Policies, safeguarding, privacy, terms,
+   complaints, accessibility, data protection, governance documents, reports and minutes,
+   and downloadable forms go in **footer columns** (`footerSettings.groups`, headed
+   *Policies / Documents / Forms*). They don't go in the main menu, even when the old site
+   had them there behind a big dropdown.
+3. **Times have one home.** Weekly recurring times (services, opening hours, sessions)
+   live once, in a `timetable` on one page (e.g. `/times`), linked from the menu. Every
+   other page that mentions them **links to that page** instead of repeating the times;
+   repeated times go stale.
+4. **No hard-coded dates for events.** A dated event (a concert, a fair, a First Communion
+   date, a diary entry) never goes in page text: it belongs in the **calendar** (`/calendar`,
+   fed by the Events module). A page links to the calendar; news about an event is a post.
+   When migrating, collect every dated event into the report's **Calendar to set up** list
+   so a person can enter them. Never copy dates into pages.
+
 ## The one rule that must not be broken
 **Author data, not code.** All routing, layouts, components, page + blog rendering, the
 block schema and theming live in the `ferst-core` package (installed in `node_modules`,
