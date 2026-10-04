@@ -123,7 +123,9 @@ The post body in Markdown.
 ```
 
 - Use the **original publication date**. Tags must exist in `src/content/tags/` (one JSON per
-  tag, per `tagSchema`), so add the ones you use.
+  tag, per `tagSchema`). A new site starts with four: `blog`, `news`, `announcement` and
+  `events`. Keep, rename or replace them to match how the old site files its posts, and add
+  the ones you need (a tag no post uses gets no page, so a leftover starter is harmless).
 - If the old site has a very large archive, migrate the most recent ~12 months fully and report
   the rest as a follow-up, with counts and the oldest date.
 

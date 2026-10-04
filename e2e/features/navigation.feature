@@ -15,7 +15,8 @@ Feature: A visitor moves around the site through the main navigation
     When they follow "Services" in the main navigation
     Then they see a level-1 heading "Services"
 
-  Scenario: The navigation reaches the Contact page
+  Scenario: The header's Contact button reaches the Contact page, and it isn't repeated in the menu
     Given the visitor opens the "/" page
-    When they follow "Contact" in the main navigation
+    Then the main navigation has no "Contact" link
+    When they follow the header button "Contact"
     Then they see a level-1 heading "Get in touch"
