@@ -62,6 +62,8 @@ Map each section of the old page to the closest block. Typical matches:
 | "Get in touch" strip, button rows | `cta`, `banner`, `button` |
 | Important notice, alert | `notice`, `announcement` |
 | A contact's phone / email / website as a row (no full card needed) | `linkRow` (title, links, optional intro + note) |
+| Several contacts or offices (a directory) | `contacts`: groups of compact cards (role, name, phone, email + subject, address, hours), one shared note per group. Not a stack of `contactCard`s. |
+| An image beside a paragraph | `mediaText` (`imageSide: start / end`; stacks on phones). Not a `grid` with prose + image. |
 | Weekly times for one or more places (service times, opening hours, sessions) | `timetable` (a card per place, empty days dropped; `layout: "table"` to compare). Never nested sections + tables. |
 | A prayer, verse or poem | `quote`: line breaks are kept |
 | A policy, terms, conditions or other legal text | `document`: one block, clauses numbered automatically, contents list, `updated` date. Don't type numbers into headings. |
