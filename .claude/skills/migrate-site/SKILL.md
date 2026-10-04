@@ -1,6 +1,6 @@
 ---
 name: migrate-site
-description: Rebuild an existing website, given its URL, in this Ferst thin-client repo — snapshot the old site, inventory it, recreate its pages, posts, brand, navigation and media as Ferst content data using only the engine's blocks, keep or redirect its URLs, audit coverage, and finish with a pull request whose MIGRATION-REPORT.md lists everything that could not be built. Use when asked to migrate, move, copy, rebuild or recreate a website from a URL on Ferst.
+description: Rebuild an existing website, given its URL, in this Ferst thin-client repo — snapshot the old site, inventory it, carry its content (pages, posts, brand, navigation, media) into Ferst as content data using only the engine's blocks, restructure it to fit Ferst's model, keep or redirect its URLs, audit coverage, and finish with a pull request whose MIGRATION-REPORT.md lists everything that could not be built. Use when asked to migrate, move, copy, rebuild or recreate a website from a URL on Ferst.
 ---
 
 # migrate-site
@@ -8,6 +8,12 @@ description: Rebuild an existing website, given its URL, in this Ferst thin-clie
 You are rebuilding an existing website in this repository. Everything in `CLAUDE.md`
 applies, above all **author data, not code**. Anything the engine's blocks can't express
 is **not built**. It is **reported** as undeliverable.
+
+**Carry the content, not the design.** Keep the client's words, facts, media and URLs.
+Don't reproduce the old site's styling, layout quirks or structure: the result should be a
+good Ferst site, built from Ferst's patterns (posts for dated things, one page per subject,
+structured sections). Step 8 makes that pass deliberately. The brand (logo and colours)
+comes across; the old site's look does not.
 
 Detailed rules, the section-to-block map and the report template are in
 [reference.md](reference.md). Read it before step 4.
@@ -89,7 +95,20 @@ Delegate to the **migration-auditor** agent. It does three things:
 It writes `MIGRATION-REPORT.md` from the template, merging in every gap the builders
 returned. Fix what it finds that's fixable, then re-run the audit until it's clean.
 
-### 8. Finish
+### 8. Restructure for Ferst → `content-architect` agent
+Once the audit is CLEAN, delegate to the **content-architect** agent. It reviews the whole
+site against [reference.md §The Ferst model](reference.md) and restructures it while keeping
+every word:
+- dated items kept as a page of links (newsletters, bulletins) become **posts**;
+- overlapping pages are **merged** (e.g. Contact + Enquiries);
+- walls of text get **structure**;
+- navigation is **simplified**.
+
+It updates `plan.json` and `_redirects` as it goes. Then **re-run the migration-auditor**
+(coverage must still account for every old page), and add the agent's *Restructured* and
+*Suggestions* lists to `MIGRATION-REPORT.md`.
+
+### 9. Finish
 ```sh
 rm -rf .migration
 git add -A && git add -f src/content/posts public/uploads   # these folders are .gitignored for local dev
@@ -104,3 +123,5 @@ description. In your final message, state the counts and the undeliverable list.
 - Use the client's own words: never invent text, prices, names, dates or quotes.
 - Never hot-link the old site. Never commit `.migration/`.
 - Every old URL ends up **built, redirected or reported**.
+- Content is faithful; **presentation is Ferst's**. Restructure freely, but never drop, invent or
+  reword facts.

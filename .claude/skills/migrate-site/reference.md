@@ -46,8 +46,12 @@ Map each section of the old page to the closest block. Typical matches:
 | On the old site | Use |
 |---|---|
 | Big intro / banner at the top | `hero` |
-| Paragraphs of text | `prose` (plain text; blank line = new paragraph), `heading` for sub-headings |
+| Paragraphs of text | `prose` (blank line = new paragraph; inline `[links](url)`, `**bold**`, `*italic*`, `- ` lists), `heading` for sub-headings |
 | A single image | `image` |
+| An image that links somewhere (poster, badge, partner logo) | `tiles` with `variant: "image"`, tile `{ href, image: { src, alt } }`: shown whole, the alt names the link |
+| A video (YouTube / Vimeo, incl. a live stream) | `video` (consent-gated). A header video: `hero` `layout: "media"` with `media.video` (a file, or a YouTube/Vimeo link) and `poster` |
+| Rotating header images | `hero` `layout: "media"` with `media.images: [...]` |
+| PDFs and documents to download | `documents` (opens in a new tab: never an in-page viewer); dated, repeating issues → posts (see *The Ferst model*) |
 | Several images | `gallery`, or `mediaCards` if they have captions or links |
 | Feature, service or value cards | `featureCards`, `tiles`, `bento` |
 | Numbers / key facts | `stats` (or `stat`) |
@@ -56,7 +60,7 @@ Map each section of the old page to the closest block. Typical matches:
 | Quotes and reviews | `testimonial`, `quote` |
 | "Get in touch" strip, button rows | `cta`, `banner`, `button` |
 | Important notice, alert | `notice`, `announcement` |
-| Address, opening times, contact details | `contactCard`, `locations` |
+| Address, opening times, contact details | `contactCard` (subtitle and note take links + line breaks; items take line breaks), `locations` |
 | Map | `mapEmbed` |
 | Prices, fixed data | `pricing`, `table` |
 | "Latest news" section | `latestPosts` |
@@ -134,17 +138,37 @@ Always report:
 
 - **Sections with no matching block:** what it was, on which page, and the closest block you
   used instead (if any).
-- **Inline links or rich formatting inside paragraphs.** `prose` is plain text for now: put
-  key links in a `button`, `cta` or `list` and report the rest.
+- **Formatting with no Ferst equivalent:** underlined text (reads as a link on the web; use bold
+  or italic), coloured or resized text, text inside images.
 - **Forms:** the `contactForm` block renders the form, but submissions need a destination
   (`action`). Report every form, what it collected, and where the old one sent it.
-- **Video and other embeds** (YouTube, Vimeo, social feeds, booking, shop, donation and
-  payment widgets): there is no video block yet.
+- **Embeds other than video** (social feeds, booking, shop, donation and payment widgets):
+  link out with a `button` and report. YouTube/Vimeo use the `video` block.
 - **Interactive features:** search, logins, member areas, e-commerce, event booking,
   comments, newsletter sign-up, cookie banners, analytics and tracking scripts.
 - **Fonts** that had to be substituted (see Brand).
 - **Media** that was too large, missing or unlicensed, and any text you couldn't read.
 - **Pages left out** and why (duplicates, empty, behind a login, the post archive beyond the cut-off in Posts).
+
+## The Ferst model — presentation (step 8, and good practice throughout)
+
+The migration keeps the **content**; Ferst decides the **presentation**. Old sites grew page
+by page; a Ferst site is built from a few strong patterns. Apply them:
+
+| Old site | Ferst way |
+|---|---|
+| A page listing newsletters / bulletins / minutes as links | One **post** per issue (date, `summary`, tag e.g. `newsletter`, the PDF as `attachment`; body optional, so a bodyless post is a tile opening the PDF). The old page becomes an intro + `latestPosts` with `tag`, or a 301 to `/posts/tag/<tag>`. |
+| Two pages about one subject (Contact + Enquiries) | **One page**, a section per topic: a `contactCard` per contact, `locations` for places. 301 the retired URL. |
+| One page about unrelated subjects | **Split it**, one page per subject. |
+| Long unbroken text | Structure from its own content: `heading`s, `list`s, `accordion` / `faq` for reference material, `steps` for processes. |
+| Sidebar page lists, "click here" links | Navigation (≤ ~7 top items, grouped by what visitors want) and real link text or buttons. |
+| Undated reference files (policies, forms) | A `documents` block on the relevant page. |
+| A notice at the very top | Hero → lead paragraph → then the `notice`. |
+| The same kind of content styled differently on each page | One pattern site-wide (every group a `mediaCards` card, every contact a `contactCard`). |
+
+Never drop, invent or reword facts while restructuring. Moved content keeps its coverage
+(update `plan.json`: `target`, or `targets: [...]` when it now lives in several files), and
+every retired URL gets a 301.
 
 ## Report template
 
@@ -163,12 +187,16 @@ Engine: ferst-core <version> · Date: <date>
 - Discovery: <sitemap / feed / WordPress API / crawl-only> · old pages found: <n>
 - Text coverage: <n> pages ≥ 80% · below 80%: <list with % and why>
 
+## Restructured for Ferst
+- <what → why, one line each (from the content-architect)>
+
 ## Undeliverable (needs a decision or an engine change)
 | Page | What | Why | Closest used / suggestion |
 |---|---|---|---|
 
 ## Follow-ups for a human
 - <forms to wire, content to confirm, archive beyond the cut-off, …>
+- <the content-architect's suggestions: rewording, outdated content, photos>
 ```
 
 The undeliverable list is the most important part of the report. Every gap must be listed

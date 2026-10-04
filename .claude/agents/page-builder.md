@@ -29,8 +29,14 @@ Read:
    name in `.migration/media/` (lowercase-hyphenated). **Don't copy files**; the main
    session copies what's used. Write real alt text for every image.
 5. **Wording:** copy the client's text faithfully. Never invent, summarise away or
-   "improve" claims, names, dates, prices or quotes. Remember that `prose` is plain text: put
-   important links in a `button`, `cta` or `list`.
+   "improve" claims, names, dates, prices or quotes. `prose` carries inline
+   `[links](url)` (incl. `tel:` / `mailto:`), `**bold**`, `*italic*` and `- ` lists, so
+   keep in-text links where they were.
+6. **Faithful to the content, not the layout.** Choose the block that presents a section
+   *well* in Ferst, not the one that mimics the old page. Don't recreate old visual
+   quirks: a sidebar of links, text set in images, decorative dividers, underlines, or
+   centred walls of text. A later pass (content-architect) restructures the site, so you
+   don't need to merge pages or invent sections.
 
 ## Hard limits
 - Write **only** your entries' target files. Don't touch settings, navigation, other pages or

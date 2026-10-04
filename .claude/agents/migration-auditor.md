@@ -13,7 +13,8 @@ missing or wrong, not to approve. You don't build pages; you report.
 2. `npm run check:thin`: no engine code copied into the repo.
 3. `node .claude/skills/migrate-site/scripts/coverage.mjs`, then read `.migration/coverage.json`:
    - **Unaccounted** old pages, i.e. not in `plan.json`: each is a defect.
-   - **Planned but not built**: a target file is missing.
+   - **Planned but not built**: a target file is missing (an entry may list several
+     `targets` after restructuring; all must exist).
    - **Below 80% text coverage**: open the old page's `.txt` and the new file. For each
      missing passage, decide whether it's *a builder slip* (fixable: list it) or *genuinely
      undeliverable* (report it with the reason).

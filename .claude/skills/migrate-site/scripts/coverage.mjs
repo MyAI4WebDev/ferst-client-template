@@ -63,12 +63,15 @@ const missingTargets = [];
 const rows = [];
 for (const e of entries) {
   if (e.action === 'skip') { rows.push({ url: e.url, action: 'skip', reason: e.reason ?? '(no reason given)' }); continue; }
-  if (!e.target || !existsSync(e.target)) { missingTargets.push(`${e.url} → ${e.target ?? '(none)'}`); continue; }
+  // After restructuring, one old page's content may live in several files (`targets`).
+  const targets = Array.isArray(e.targets) && e.targets.length ? e.targets : e.target ? [e.target] : [];
+  const absent = targets.filter((t) => !existsSync(t));
+  if (!targets.length || absent.length) { missingTargets.push(`${e.url} → ${absent.join(', ') || '(none)'}`); continue; }
   const want = (pageSentences.get(e.url) ?? []).filter((s) => !boiler.has(s));
-  const have = norm(targetText(e.target));
+  const have = norm(targets.map(targetText).join(' \n '));
   const missing = want.filter((s) => !have.includes(s));
   const ratio = want.length ? (want.length - missing.length) / want.length : 1;
-  rows.push({ url: e.url, action: e.action, target: e.target, sentences: want.length, coverage: Number(ratio.toFixed(2)), missingSample: missing.slice(0, 5) });
+  rows.push({ url: e.url, action: e.action, target: targets.join(', '), sentences: want.length, coverage: Number(ratio.toFixed(2)), missingSample: missing.slice(0, 5) });
 }
 
 const low = rows.filter((r) => r.coverage !== undefined && r.coverage < MIN);

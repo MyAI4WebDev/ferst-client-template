@@ -22,9 +22,12 @@ not build on a stale or broken base. (`--dry-run` previews; `--no-core` syncs sc
 ## Rebuilding an existing website from a URL
 Use the **`migrate-site` skill** (`.claude/skills/migrate-site/`). It snapshots the old site
 into a git-ignored `.migration/` folder and plans every URL with the `site-inventory` agent. It
-then builds pages in parallel with `page-builder` agents, audits coverage with the
-`migration-auditor` agent, and finishes with a pull request whose `MIGRATION-REPORT.md` lists
-everything **undeliverable** with the current blocks. Never write code to fill a gap. Report it.
+then builds pages in parallel with `page-builder` agents and audits coverage with the
+`migration-auditor` agent. The `content-architect` agent then restructures the result to fit
+Ferst's model (dated items as posts, merged pages, structured text), keeping every word. It
+finishes with a pull request whose `MIGRATION-REPORT.md` lists what was restructured and
+everything **undeliverable** with the current blocks. **Carry the content, not the old
+design.** Never write code to fill a gap. Report it.
 
 ## The one rule that must not be broken
 **Author data, not code.** All routing, layouts, components, page + blog rendering, the
