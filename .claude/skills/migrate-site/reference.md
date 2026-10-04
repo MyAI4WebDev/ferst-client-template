@@ -45,7 +45,8 @@ Map each section of the old page to the closest block. Typical matches:
 
 | On the old site | Use |
 |---|---|
-| Big intro / banner at the top | `hero` |
+| Big intro / banner at the top | `hero` (`layout: "media"` for a photo/video opener; `size: "screen"` for full-screen; `parallax: true` to drift). Title line breaks are kept. |
+| The intro paragraph under the header | `prose` with `variant: "lead"` |
 | Paragraphs of text | `prose` (blank line = new paragraph; inline `[links](url)`, `**bold**`, `*italic*`, `- ` lists), `heading` for sub-headings |
 | A single image | `image` |
 | An image that links somewhere (poster, badge, partner logo) | `tiles` with `variant: "image"`, tile `{ href, image: { src, alt } }`: shown whole, the alt names the link |
@@ -54,12 +55,14 @@ Map each section of the old page to the closest block. Typical matches:
 | PDFs and documents to download | `documents` (opens in a new tab: never an in-page viewer); dated, repeating issues → posts (see *The Ferst model*) |
 | Several images | `gallery`, or `mediaCards` if they have captions or links |
 | Feature, service or value cards | `featureCards`, `tiles`, `bento` |
-| Numbers / key facts | `stats` (or `stat`) |
+| Numbers / key facts | `stats` (or `stat`); a single figure is centred |
 | Step-by-step process | `steps` |
 | Questions and answers | `faq`; other collapsible content → `accordion`; tabbed → `tabs` |
 | Quotes and reviews | `testimonial`, `quote` |
 | "Get in touch" strip, button rows | `cta`, `banner`, `button` |
 | Important notice, alert | `notice`, `announcement` |
+| A contact's phone / email / website as a row (no full card needed) | `linkRow` (title, links, optional intro + note) |
+| A policy, terms, conditions or other legal text | `document`: one block, clauses numbered automatically, contents list, `updated` date. Don't type numbers into headings. |
 | Address, opening times, contact details | `contactCard` (subtitle and note take links + line breaks; items take line breaks), `locations` |
 | Map | `mapEmbed` |
 | Prices, fixed data | `pricing`, `table` |
