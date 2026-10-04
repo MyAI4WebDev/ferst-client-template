@@ -63,11 +63,13 @@ and its target file. It also returns a short brand summary and proposed navigati
 the plan before building. **Nothing in the inventory may be left without an entry.**
 
 ### 4. Brand and settings (you)
+**Don't write `themeSettings`.** Tokens are set in the portal for every branch. Put the
+proposed brand (the three colours, look, fonts) in the report's *Brand to apply in Theme
+Studio* section for a person to apply.
 Using the agent's brand summary and [reference.md §Brand](reference.md), set the
 `src/content/*Settings/index.json` singletons:
 - identity, contact and logo;
-- the three theme colours and the look;
-- fonts (Inter, Playfair Display or Poppins only, with substitutions reported);
+- (colours, look and fonts: **proposed in the report**, not written; see above);
 - navigation (header, footer) using the **new** URLs from the plan.
 
 ### 5. Pages and posts → `page-builder` agents, in parallel

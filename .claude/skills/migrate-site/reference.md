@@ -23,13 +23,13 @@ Edit the singletons in `src/content/*Settings/index.json`, following their schem
 - **`siteSettings`**: the site name and tagline (`identity`); address, phone, email (`contact`).
 - **`logoSettings`**: download the logo into `public/uploads/` and reference it as `/uploads/<file>`.
   Add light and dark variants if the old site has them.
-- **`themeSettings`**: set `brand`, `ink` and `surface` as hex colours taken from the old site.
-  The engine derives everything else from those three. Then set `corners`, `elevation` and
-  `stroke` to match the look.
+- **`themeSettings`: don't edit it.** Tokens are portal-owned for every branch. Work out `brand`, `ink`
+  and `surface` (hex) from the old site, plus the look and fonts, and **propose** them in the report's
+  *Brand to apply in Theme Studio* section. The engine derives everything else from those
+  three; propose `corners`, `elevation` and `stroke` to match the look.
   - **Fonts:** the engine self-hosts **Inter, Playfair Display and Poppins** (see
-    `node_modules/ferst-core/styles/fonts.css`). Use the closest of these in `fonts.heading`,
-    `fonts.body` and `fonts.display`. If the old site uses another font, use the closest
-    match and **report the substitution**. Don't add font files.
+    `node_modules/ferst-core/styles/fonts.css`). Propose the closest of these. If the old
+    site uses another font, **report the substitution**. Don't add font files.
 - **`navbarSettings` / `footerSettings`**: recreate the navigation using the **new** page
   URLs (see URLs).
 - **`postsSettings`**: title and intro for the news listing. **`calendarSettings`**: if the old
@@ -200,6 +200,9 @@ Engine: ferst-core <version> · Date: <date>
 
 ## Restructured for Ferst
 - <what → why, one line each (from the content-architect)>
+
+## Brand to apply in Theme Studio
+- brand <hex> · ink <hex> · surface <hex> · corners / elevation / stroke · heading + body fonts (from Inter, Playfair Display, Poppins)
 
 ## Calendar to set up
 | Date | Time | Event | Place | Repeats | Source page |

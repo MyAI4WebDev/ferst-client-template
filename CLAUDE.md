@@ -62,6 +62,22 @@ read-only). So:
   it**: that is an engine change, not something to build in this repo. Report it as a
   **core request issue** (below).
 
+## Talking to the core team: GitHub issues, both ways
+- **Start every session with** `gh issue list --label core-update --state open`. These are
+  messages from the core team: what a new ferst-core or template version changed, and the
+  tasks this site must do. Do them, tick the boxes, comment what you did, and close the
+  issue when it's done. Also read new comments on your own `core-request` issues: that's
+  where the core team says accepted / declined, which version, and what to change.
+- **To ask the core team for something**, open a `core-request` issue (below).
+- Never use artifacts, docs pages or notes in the repo to talk to the core team.
+
+## Design tokens are set in the portal, for every branch
+Colours, fonts and the look (`src/content/themeSettings/index.json`) belong to the portal's
+**Theme Studio**, which writes the same tokens to the live branch and every test branch
+(`main`, `dev`, …). **Never edit `themeSettings` in the repo**, on any branch: a local edit
+makes the branches drift, and a merge would overwrite the portal's choice. If the brand
+should change, propose it (in your report or PR) for a person to apply in Theme Studio.
+
 ## Asking the engine for something: `core-request` issues
 When the site needs something the engine can't do (a missing block, field, layout fix or
 behaviour), open a **GitHub issue in this repo** labelled `core-request`. The Ferst core
