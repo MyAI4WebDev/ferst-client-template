@@ -48,6 +48,7 @@ Map each section of the old page to the closest block. Typical matches:
 | On the old site | Use |
 |---|---|
 | Big intro / banner at the top | `hero` (`layout: "media"` for a photo/video opener; `size: "screen"` for full-screen; `parallax: true` to drift). Title line breaks are kept. |
+| A short, wide header strip (e.g. 1000 × 175) | `hero` `layout: "media"`, `size: "compact"`, `fullBleed: true`; `focus` (e.g. `"center 30%"`) picks which part shows. Never drop the picture for a plain hero. |
 | The intro paragraph under the header | `prose` with `variant: "lead"` |
 | Paragraphs of text | `prose` (blank line = new paragraph; inline `[links](url)`, `**bold**`, `*italic*`, `- ` lists), `heading` for sub-headings |
 | A single image | `image` |
