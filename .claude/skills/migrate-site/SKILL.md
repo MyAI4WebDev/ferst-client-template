@@ -39,6 +39,11 @@ git checkout -b migrate/<old-domain>
 Confirm the old site is reachable from this environment (`curl -sI <url>`). If it isn't,
 stop and say so: a cloud session may need network access to that domain allowed.
 
+List what the site has from its organisation in the portal: `npx --no-install ferst-modules`
+(its forms, with their ids, and its calendar address). Keep the output: builders place forms
+by id from it, and you set `calendarSettings.embedUrl` from it. If it can't reach the
+platform, say so in the report and leave forms and the calendar as follow-ups.
+
 ### 2. Snapshot the old site
 ```sh
 node .claude/skills/migrate-site/scripts/snapshot.mjs <url>
@@ -74,7 +79,7 @@ Using the agent's brand summary and [reference.md §Brand](reference.md), set th
 
 ### 5. Pages and posts → `page-builder` agents, in parallel
 Give each **page-builder** agent a batch of plan entries: about 3–6 pages or 10 posts each,
-with up to 4 agents at a time. Each agent writes its target files from the snapshot and
+with up to 4 agents at a time, plus the forms list from step 1. Each agent writes its target files from the snapshot and
 returns the list of gaps it couldn't build. Collect every gap; you'll need them for the report.
 - Builders **don't run the build**: parallel builds would clash. You run it between batches
   (`npm run build`) and send failures back to the right builder.

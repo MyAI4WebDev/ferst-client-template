@@ -32,10 +32,13 @@ Read:
    "improve" claims, names, dates, prices or quotes. `prose` carries inline
    `[links](url)` (incl. `tel:` / `mailto:`), `**bold**`, `*italic*` and `- ` lists, so
    keep in-text links where they were.
-6. **Times and dates:** recurring times go only in the one `timetable` page from the plan;
+6. **Forms:** place the organisation's forms by id (`{ "type": "form", "form": "<id>" }`);
+   the main session gives you the list from `npx --no-install ferst-modules`. Never copy a
+   form's fields or write a `contactForm` `action`. A form with no match is a **gap**.
+7. **Times and dates:** recurring times go only in the one `timetable` page from the plan;
    elsewhere write a link to it ("See service times"). Dated events go in your returned
    **calendar** list (`{ date, time, title, place, repeats, page }`), never into page text.
-7. **Faithful to the content, not the layout.** Choose the block that presents a section
+8. **Faithful to the content, not the layout.** Choose the block that presents a section
    *well* in Ferst, not the one that mimics the old page. Don't recreate old visual
    quirks: a sidebar of links, text set in images, decorative dividers, underlines, or
    centred walls of text. A later pass (content-architect) restructures the site, so you

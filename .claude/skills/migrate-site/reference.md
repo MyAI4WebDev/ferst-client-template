@@ -32,8 +32,10 @@ Edit the singletons in `src/content/*Settings/index.json`, following their schem
     site uses another font, **report the substitution**. Don't add font files.
 - **`navbarSettings` / `footerSettings`**: recreate the navigation using the **new** page
   URLs (see URLs).
-- **`postsSettings`**: title and intro for the news listing. **`calendarSettings`**: if the old
-  site embeds a Google Calendar, put its embed URL here.
+- **`postsSettings`**: title and intro for the news listing. **`calendarSettings`**: set
+  `embedUrl` to the Events address `npx --no-install ferst-modules` prints. Never paste the old
+  site's Google Calendar embed: list that calendar under *Calendar to set up* so it's connected
+  in the portal.
 
 ## Pages
 
@@ -73,7 +75,7 @@ Map each section of the old page to the closest block. Typical matches:
 | "Latest news" section | `latestPosts` |
 | Bullet lists | `list` |
 | Side-by-side or grouped layout | `section`, `grid`, `stack` |
-| Contact form | `contactForm` (see "always report" below) |
+| A form (contact, booking, enquiry) | `form` placed by id: `{ "type": "form", "form": "<id>" }`, from `npx --no-install ferst-modules`. No matching form? Leave it out and list it under *Forms to create in the portal*. |
 
 Rules:
 
@@ -150,8 +152,9 @@ Always report:
   used instead (if any).
 - **Formatting with no Ferst equivalent:** underlined text (reads as a link on the web; use bold
   or italic), coloured or resized text, text inside images.
-- **Forms:** the `contactForm` block renders the form, but submissions need a destination
-  (`action`). Report every form, what it collected, and where the old one sent it.
+- **Forms:** forms are created in the portal, not here. Place an existing one by id (`form`
+  block); for any the portal doesn't have yet, report what it collected and where the old one
+  sent it under *Forms to create in the portal*.
 - **Embeds other than video** (social feeds, booking, shop, donation and payment widgets):
   link out with a `button` and report. YouTube/Vimeo use the `video` block.
 - **Interactive features:** search, logins, member areas, e-commerce, event booking,
@@ -209,6 +212,10 @@ Engine: ferst-core <version> · Date: <date>
 ## Calendar to set up
 | Date | Time | Event | Place | Repeats | Source page |
 |---|---|---|---|---|---|
+
+## Forms to create in the portal
+| Form | Fields | Where the old one sent it | Page |
+|---|---|---|---|
 
 ## Undeliverable (needs a decision or an engine change)
 | Page | What | Why | Closest used / suggestion |

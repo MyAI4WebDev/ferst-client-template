@@ -47,6 +47,14 @@ design.** Never write code to fill a gap. Report it.
    fed by the Events module). A page links to the calendar; news about an event is a post.
    When migrating, collect every dated event into the report's **Calendar to set up** list
    so a person can enter them. Never copy dates into pages.
+5. **Forms and calendars come from the portal.** The organisation's forms and calendars
+   live in the Ferst portal (the Forms and Events modules), never in this repo. Run
+   `npx --no-install ferst-modules` to see what this site has. Place a form with
+   `{ "type": "form", "form": "<id>" }`: it reads its fields and where it sends from the
+   portal at build, so never copy a form's fields or wire a `contactForm` `action` by hand.
+   Show the calendar by setting `calendarSettings.embedUrl` to the address it prints, never
+   an old site's or a person's own Google Calendar. If a form or calendar the site needs
+   isn't there, report it (or file a `core-request`) so it's created in the portal.
 
 ## The one rule that must not be broken
 **Author data, not code.** All routing, layouts, components, page + blog rendering, the
