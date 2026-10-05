@@ -79,6 +79,11 @@ Map each section of the old page to the closest block. Typical matches:
 
 Rules:
 
+- **Alignment: leave the defaults unless the client wants otherwise.** A page's `align`
+  (start / center / end) sets every block on it; a `section` can override its blocks. Recipe
+  titles are centred by default and cards follow the page, icons included. To follow a
+  client's preference for one block, set `"align"` on that block (it re-aligns the whole
+  block) or `"headingAlign"` (just a recipe's title and intro). Never add styling to fake it.
 - **Use the client's own words.** Copy text faithfully: fix obvious typos, never invent claims,
   prices, dates, names or quotes. If something is unclear, keep the original and mention it in
   the report.
