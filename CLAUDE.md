@@ -79,6 +79,26 @@ read-only). So:
 - **To ask the core team for something**, open a `core-request` issue (below).
 - Never use artifacts, docs pages or notes in the repo to talk to the core team.
 
+## Requests from the site's people: `client-request` issues
+The site's editors ask for changes, and the platform opens each one as an issue in this repo
+labelled `client-request`:
+- **`page-change`:** "Requested changes" on a page in the content editor. The issue names the
+  page.
+- **`form-placement`:** add one of the organisation's portal forms, placed by id.
+- **`calendar-switch`:** point `calendarSettings.embedUrl` at the portal calendar.
+
+The issue body ends with a hidden `<!-- ferst: … -->` block saying who asked and about what.
+Leave it alone.
+- **Every session, after `core-update`:** `gh issue list --label client-request --state open`.
+  Each one is a task: make the change on your working branch (`dev`), run the gate, push.
+- **Comment** what you changed and where to see it (the dev address), then **close the
+  issue**. The person who asked sees your comment in the portal's Requests tab.
+- **Unclear, or not possible with the blocks?** Comment with your question or the closest
+  option, and leave it open. Never write code to fill a gap. File a `core-request` if the
+  engine needs something.
+- **Don't edit the `requests` entries in page JSON by hand.** The platform stamps them
+  (`issue`, `by`, `at`) and keeps them in step with the issues.
+
 ## Design tokens are set in the portal, for every branch
 Colours, fonts and the look (`src/content/themeSettings/index.json`) belong to the portal's
 **Theme Studio**, which writes the same tokens to the live branch and every test branch
