@@ -57,6 +57,7 @@ Map each section of the old page to the closest block. Typical matches:
 | Rotating header images | `hero` `layout: "media"` with `media.images: [...]` |
 | PDFs and documents to download | `documents` (opens in a new tab: never an in-page viewer); dated, repeating issues → posts (see *The Ferst model*) |
 | Several images | `gallery`, or `mediaCards` if they have captions or links |
+| People (clergy, staff, trustees) with photos | `mediaCards` with `"ratio": "3/4"` (portrait) or `"1/1"`, and on each photo `"focus": "center 25%"` so faces stay in the crop. Never pre-crop images by hand. |
 | Feature, service or value cards | `featureCards`, `tiles`, `bento` |
 | Numbers / key facts | `stats` (or `stat`); a single figure is centred |
 | Step-by-step process | `steps` |
@@ -80,6 +81,8 @@ Map each section of the old page to the closest block. Typical matches:
 
 Rules:
 
+- **Cropped images keep their subject:** any image a block crops (`image` with a `ratio`, `mediaCards`, `tiles`, `bento`, `mediaText`) takes `"focus"`, e.g. `"center 25%"` for a face or `"top"`.
+- **Documents open in a new tab by themselves** (PDF, Word, Excel, PowerPoint links). Just link them.
 - **Alignment: leave the defaults unless the client wants otherwise.** A page's `align`
   (start / center / end) sets every block on it; a `section` can override its blocks. Recipe
   titles are centred by default and cards follow the page, icons included. To follow a
