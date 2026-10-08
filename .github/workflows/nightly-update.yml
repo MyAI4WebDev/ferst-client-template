@@ -1,0 +1,135 @@
+# The overnight update's steps, run for each site by its own `update.yml`: a small caller on
+# the site's `main`, since GitHub only schedules a repo's default branch. Living here, a fix
+# reaches every site at its next run, with no change to any site's `main`.
+#
+# It first compares versions (seconds; nothing is installed). Only when the engine or the
+# template is newer does it run `npm run update` (sync the template-owned files, install
+# ferst-core@latest, then build + check:thin), push the result to `dev` and deploy the test
+# copy. It never touches `main`: the live site changes only when a person releases the test
+# copy after checking it. Template-only (no site carries it); docs/UPDATING.md describes it.
+name: nightly-update
+
+on:
+  workflow_call:
+    inputs:
+      force:
+        description: Run the whole update even if nothing is newer
+        type: boolean
+        default: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    concurrency:
+      group: nightly-update
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ github.token }}
+      # Pin gh to the site's own repo: `npm run update` adds the template as a git remote,
+      # which gh could otherwise take for "this repository" and act on instead.
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: dev
+
+      - name: Anything newer?
+        id: check
+        env:
+          FORCE: ${{ inputs.force }}
+        run: |
+          if [ ! -f ferst-site.json ]; then
+            echo "Not a site (this is the template itself): nothing to update."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          upstream=$(node -p "require('./ferst-template.json').upstream || 'https://github.com/MyAI4WebDev/ferst-client-template.git'")
+          git fetch --quiet --depth 1 "$upstream" HEAD
+          template_latest=$(git show FETCH_HEAD:ferst-template.json | node -p "JSON.parse(require('fs').readFileSync(0, 'utf8')).templateVersion")
+          template_here=$(node -p "require('./ferst-template.json').templateVersion")
+          core_latest=$(npm view ferst-core version)
+          core_here=$(node -p "(require('./package-lock.json').packages['node_modules/ferst-core'] || {}).version || ''")
+          echo "template: $template_here -> $template_latest; ferst-core: $core_here -> $core_latest"
+          echo "core=$core_latest" >> "$GITHUB_OUTPUT"
+          echo "template=$template_latest" >> "$GITHUB_OUTPUT"
+          if [ "$template_here" = "$template_latest" ] && [ "$core_here" = "$core_latest" ] && [ "$FORCE" != "true" ]; then
+            echo "Already current."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v4
+        if: steps.check.outputs.changed == 'true'
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        if: steps.check.outputs.changed == 'true'
+        run: npm ci
+
+      - name: Update (template files, latest engine, then build + check:thin)
+        if: steps.check.outputs.changed == 'true'
+        run: npm run update
+
+      - name: Push to dev
+        id: push
+        if: steps.check.outputs.changed == 'true'
+        env:
+          CORE: ${{ steps.check.outputs.core }}
+          TEMPLATE: ${{ steps.check.outputs.template }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nothing changed."
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit --quiet -m "chore(update): ferst-core $CORE, template $TEMPLATE"
+          # Content edits can land on dev while this runs, so replay this one commit on top.
+          for attempt in 1 2 3; do
+            if git pull --rebase --quiet origin dev && git push --quiet origin HEAD:dev; then
+              echo "pushed=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "Couldn't push to dev after 3 attempts." >&2
+          exit 1
+
+      - name: Deploy the test copy
+        if: steps.push.outputs.pushed == 'true'
+        run: |
+          if [ -f .github/workflows/deploy.yml ]; then
+            gh workflow run deploy.yml --ref dev
+          else
+            echo "No deploy.yml: this site deploys some other way."
+          fi
+
+      - name: Note it on open core-update issues
+        if: steps.push.outputs.pushed == 'true'
+        env:
+          CORE: ${{ steps.check.outputs.core }}
+          TEMPLATE: ${{ steps.check.outputs.template }}
+        run: |
+          run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          for n in $(gh issue list --label core-update --state open --json number --jq '.[].number'); do
+            gh issue comment "$n" --body "Overnight update: the test copy now runs ferst-core $CORE with template $TEMPLATE ([run]($run_url)). Any other tasks in this issue are picked up next."
+          done
+
+      - name: Report a failed update
+        if: failure()
+        run: |
+          run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          body="The overnight update didn't finish. The run shows which step failed: $run_url. If it stopped before \"Push to dev\", nothing was pushed and the test copy is unchanged."
+          gh label create update-failed --color B60205 --description "The overnight update failed; see the run" --force
+          open=$(gh issue list --label update-failed --state open --json number --jq '.[0].number // empty')
+          if [ -n "$open" ]; then
+            gh issue comment "$open" --body "$body"
+          else
+            gh issue create --title "Overnight update failed" --label update-failed --body "$body"
+          fi
