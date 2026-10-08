@@ -35,10 +35,13 @@ The `update` Action ran shortly after midnight, and has normally brought `dev` c
 2. **`core-update`:** the core team's release tasks. Do the remaining tasks on `dev`, tick the
    boxes, push, comment what you did, and close the issue.
 3. **`client-request`:** a request from the site's editors. Make the change on a branch and
-   open a PR into `dev`, so a person checks it before it reaches the test copy. Comment on
-   the issue with what you changed and the PR link, and leave the issue open. When a later
-   night finds that PR merged, comment where to see the change on the test copy, then close
-   the issue. Skip a request that already has an open PR.
+   open a PR into `dev`: the core team reviews every editor's request before it reaches the
+   test copy, so never push one straight to `dev`. Comment on the issue as CLAUDE.md says
+   (plain words, no PR link, nothing about how it was done), and leave the issue open. When a
+   later night finds that PR merged, comment where to see the change on the test copy, then
+   close the issue. Skip a request that already has an open PR.
+   - If the engine would have to change, open a `core-request` in this repo, mention it on
+     the editor's issue, and leave that issue open.
 
 **Unclear, or not possible with the blocks?** Comment your question or the closest option,
 leave the issue open, and move on (CLAUDE.md). Never write code to fill a gap.

@@ -100,12 +100,20 @@ labelled `client-request`:
 The issue body ends with a hidden `<!-- ferst: … -->` block saying who asked and about what.
 Leave it alone.
 - **Every session, after `core-update`:** `gh issue list --label client-request --state open`.
-  Each one is a task: make the change on your working branch (`dev`), run the gate, push.
-- **Comment** what you changed and where to see it (the dev address), then **close the
-  issue**. The person who asked sees your comment in the portal's Requests tab.
+  Each one is a task. Make the change on a branch, run the gate, and open a **pull request
+  into `dev`**: the core team reviews every editor's request before it reaches the test copy.
+  Never push an editor's request straight to `dev`. Skip a request that already has an open PR.
+- **Comment on the issue** in plain words, as the Ferst team: what you've prepared, and that
+  it will appear on the test copy once it's been reviewed. Leave the issue open. The person
+  who asked reads your comment in the portal's Requests tab, so no PR links, no tooling, and
+  nothing about how the work was done.
+- **Once the PR is merged**, comment where to see the change on the test copy (the dev address
+  and the page) and that it goes live with the next release, then **close the issue**.
 - **Unclear, or not possible with the blocks?** Comment with your question or the closest
-  option, and leave it open. Never write code to fill a gap. File a `core-request` if the
-  engine needs something.
+  option, and leave it open. Never write code to fill a gap.
+- **Needs the engine to change?** Open a `core-request` in this repo (below), mention it on
+  the editor's issue in plain words, and leave that issue open. Never open issues in another
+  repository: the core team reads every site's core-requests.
 - **Don't edit the `requests` entries in page JSON by hand.** The platform stamps them
   (`issue`, `by`, `at`) and keeps them in step with the issues.
 
