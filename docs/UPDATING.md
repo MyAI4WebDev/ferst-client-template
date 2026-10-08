@@ -20,6 +20,22 @@ The authoritative owned-path list is `ferst-template.json` `ownedPaths` (the har
 the manual example below is illustrative and may lag). The sections below explain what the
 command does under the hood, and the manual path if you ever need it.
 
+### Overnight, automatically
+
+Every site carries `.github/workflows/update.yml` (template-owned). Each night at 00:01 UTC:
+
+1. It compares the site's engine and template versions with the latest. This takes seconds
+   and installs nothing; if the site is current, the run ends there.
+2. When something is newer, it runs `npm run update` and commits the result to `dev`, replaying
+   its one commit on top of any content edits that landed meanwhile.
+3. It starts `deploy.yml` for `dev`, because a push made with an Action's own token starts no
+   workflows, and notes the update on the open `core-update` issues.
+4. A failed build or check pushes nothing and opens (or adds to) one `update-failed` issue.
+
+It never touches `main`: releasing the test copy to the live site stays a person's decision.
+Run it by hand from the Actions tab; the `force` option runs the whole path even when nothing
+is newer.
+
 ## 1. Engine fixes — the common case (no repo touched)
 
 A change to a component, layout, route, style, theming or the CMS schema lives in
