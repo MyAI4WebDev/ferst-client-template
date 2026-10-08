@@ -19,6 +19,16 @@ owned paths (**your content is never touched**), installs `ferst-core@latest`, a
 `build` + `check:thin`. If it reports a failure, fix or surface that before continuing — do
 not build on a stale or broken base. (`--dry-run` previews; `--no-core` syncs scaffold only.)
 
+## Overnight, the site keeps itself current
+- **00:01 UTC, the `update` Action** (`.github/workflows/update.yml`): when the engine or the
+  template is newer, it runs `npm run update`, pushes the result to `dev` and deploys the
+  test copy. A failure pushes nothing and opens an `update-failed` issue.
+- **Later, a scheduled run** follows `.claude/skills/nightly/`: it works this repo's open
+  issues and leaves comments and PRs for the morning.
+
+So `git pull` before you start, and expect overnight commits on `dev`. Neither ever touches
+`main`: the live site changes only when a person releases the test copy.
+
 ## Rebuilding an existing website from a URL
 Use the **`migrate-site` skill** (`.claude/skills/migrate-site/`). It snapshots the old site
 into a git-ignored `.migration/` folder and plans every URL with the `site-inventory` agent. It
