@@ -49,6 +49,12 @@ git checkout -b migrate/<old-domain>
 Confirm the old site is reachable from this environment (`curl -sI <url>`). If it isn't,
 stop and say so: a cloud session may need network access to that domain allowed.
 
+**Broken https:** if the old site's https fails (an expired or self-signed certificate) but
+http works, the scripts read it over http and print why. Note it in the report. Search
+engines then likely know the old site by its `http://` addresses, so on the day the domain
+moves those get checked too (reference.md, "Telling Google"). Moving fixes the certificate:
+Cloudflare issues a proper one.
+
 **Search Console:** ask the client for read access to the old site's Search Console, or
 for its export (Performance → Pages → Export → CSV). It's the only source that shows which
 addresses actually bring visitors. If the platform has assessed the site,

@@ -12,6 +12,8 @@
 //     final address. A redirect needs its line in public/_redirects;
 //   - drop: not requested; its reason belongs in notes.
 // --write records each result in the map's `checked` column. Exits 1 on any failure.
+// On the day the domain moves, if the old site lived on http (its https broken), run it with
+// --base http://<domain> too: each old address steps up to https first, which is free.
 // First it asks for an address the site can't have: a site that answers that with anything
 // but a 404 (a "soft 404") would pass every kept address, so the check refuses to run.
 
@@ -35,10 +37,16 @@ export async function trailFor(base, path, fetchImpl = fetch) {
       return trail;
     }
     await res.body?.cancel?.();
-    trail.push({ status: res.status, path: pathOf(url.href) });
     const location = res.headers.get('location');
-    if (res.status < 300 || res.status >= 400 || !location) return trail;
-    url = new URL(location, url);
+    if (res.status < 300 || res.status >= 400 || !location) {
+      trail.push({ status: res.status, path: pathOf(url.href) });
+      return trail;
+    }
+    const next = new URL(location, url);
+    // http → https on the same address: the domain's own step up, not a redirect rule.
+    const upgrade = url.protocol === 'http:' && next.protocol === 'https:' && next.host === url.host && next.pathname === url.pathname;
+    trail.push({ status: res.status, path: pathOf(url.href), ...(upgrade ? { upgrade: true } : {}) });
+    url = next;
   }
   return trail;
 }

@@ -201,8 +201,10 @@ export function parseRedirects(text) {
  */
 export function judge(row, trail) {
   const result = trail.map((t) => t.status).join('>');
-  const last = trail[trail.length - 1];
-  const hops = trail.length - 1;
+  // An old http:// address stepping up to https first (marked `upgrade`) is free: judge the rest.
+  const steps = trail[0]?.upgrade ? trail.slice(1) : trail;
+  const last = steps[steps.length - 1];
+  const hops = steps.length - 1;
   if (!last || last.status !== 200) {
     return { ok: false, result, problem: `ends in ${last ? last.status : 'no response'}` };
   }
@@ -210,7 +212,7 @@ export function judge(row, trail) {
   // redirect it's a second hop, so the rule should point at the slash form.
   const slashOnly = (from, to) => keyOf(from) === keyOf(to);
   if (row.action === 'keep') {
-    if (hops === 0 || (hops === 1 && slashOnly(trail[0].path, last.path))) return { ok: true, result };
+    if (hops === 0 || (hops === 1 && slashOnly(steps[0].path, last.path))) return { ok: true, result };
     return { ok: false, result, problem: `a kept address should not redirect (lands on ${last.path})` };
   }
   if (row.action === 'redirect') {

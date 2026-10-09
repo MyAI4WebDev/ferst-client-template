@@ -3,7 +3,8 @@ import { createBdd } from 'playwright-bdd';
 // The skill's scripts are plain .mjs (they ship to every site's .claude/); these steps drive
 // their pure logic with sample data: no network, no browser.
 import { judge, keyOf, mergeFound, oldStatus, parseSearchConsole } from '../../.claude/skills/migrate-site/scripts/urlmap.mjs';
-import { softNotFound, staticProblems } from '../../.claude/skills/migrate-site/scripts/check-urls.mjs';
+import { softNotFound, staticProblems, trailFor } from '../../.claude/skills/migrate-site/scripts/check-urls.mjs';
+import { reachOldSite } from '../../.claude/skills/migrate-site/scripts/urls.mjs';
 
 const { Given, When, Then, Before } = createBdd();
 
@@ -16,6 +17,8 @@ let row: Row = {};
 let verdict: { ok: boolean; result: string; problem?: string } | null = null;
 let redirectsText = '';
 let refusal: string | null | undefined;
+let oldSiteFetch: typeof fetch = fetch;
+let reach: { origin: string; note?: string; error?: string } | null = null;
 
 Before(() => {
   found = [];
@@ -26,6 +29,8 @@ Before(() => {
   verdict = null;
   redirectsText = '';
   refusal = undefined;
+  oldSiteFetch = fetch;
+  reach = null;
 });
 
 const rowFor = (path: string) => rows.find((r) => keyOf(r.old_url) === keyOf(path));
@@ -125,6 +130,41 @@ Then('the check refuses to run, because {string}', async ({}, text: string) => {
 
 Then('the check goes ahead', async () => {
   expect(refusal).toBeNull();
+});
+
+Given("the old site's https fails with {string} but it answers over http", async ({}, code: string) => {
+  oldSiteFetch = (async (input: RequestInfo | URL) => {
+    if (String(input).startsWith('https:')) throw Object.assign(new TypeError('fetch failed'), { cause: { code } });
+    return new Response(null, { status: 200 });
+  }) as typeof fetch;
+});
+
+Given('the old site answers over https', async () => {
+  oldSiteFetch = (async () => new Response(null, { status: 200 })) as typeof fetch;
+});
+
+When('the migration reaches the old site at {string}', async ({}, start: string) => {
+  reach = await reachOldSite(start, oldSiteFetch);
+});
+
+Then('it reads the old site at {string}', async ({}, origin: string) => {
+  expect(reach).toMatchObject({ origin });
+  expect(reach?.error).toBeUndefined();
+});
+
+Then('it warns that search engines likely know its http addresses', async () => {
+  expect(reach?.note).toMatch(/CERT_HAS_EXPIRED/);
+  expect(reach?.note).toMatch(/http:\/\/ addresses/);
+});
+
+When('the new site answers at {string}: 301 to https, then 301, then 200 at {string}', async ({}, base: string, final: string) => {
+  const site = (async (input: RequestInfo | URL) => {
+    const u = new URL(String(input));
+    if (u.protocol === 'http:') return new Response(null, { status: 301, headers: { location: `https://${u.host}${u.pathname}` } });
+    if (u.pathname === row.old_url) return new Response(null, { status: 301, headers: { location: final } });
+    return new Response(null, { status: 200 });
+  }) as typeof fetch;
+  verdict = judge(row, await trailFor(base, row.old_url, site));
 });
 
 Given('a live address {string} with no decision', async ({}, path: string) => {

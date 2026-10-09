@@ -142,7 +142,9 @@ When the domain moves to the new site:
 2. **Switch DNS.** Check HTTPS works on the bare domain and `www`, and that one redirects to
    the other (the one in `siteUrl` is the real one).
 3. **Run the redirect check against the live site:**
-   `check-urls.mjs --base https://<domain> --write`. Fix anything it finds the same day.
+   `check-urls.mjs --base https://<domain> --write`. Fix anything it finds the same day. If
+   the old site lived on http (its https was broken), run it with `--base http://<domain>`
+   too: each old address must step up to https, then reach its page. The step up is free.
 4. **Search Console:** verify the domain if it isn't already (a DNS record); submit
    `https://<domain>/sitemap.xml`; use URL inspection on the tier A pages to ask for
    re-crawling. The same domain needs no "change of address"; that's only for a new domain.
