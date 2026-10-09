@@ -20,3 +20,11 @@ Feature: A site tells search engines what to index
   Scenario: Every page names its address on the live site
     Given the visitor opens the "/" page
     Then its canonical address is "https://example.org/"
+
+  # Without a 404 page, Cloudflare Pages answers a missing address with the home page and a
+  # 200 (a "soft 404"): search engines index the home page under every dead address.
+  Scenario: A missing address answers "page not found", not the home page
+    When the visitor opens an address the site doesn't have
+    Then the answer is a 404
+    And the page says it isn't here, with a way back to the home page
+    And it names no canonical address

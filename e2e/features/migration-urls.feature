@@ -37,6 +37,16 @@ Feature: Every old address of a migrated site is accounted for
     When the new site answers 308, then 200 at "/clergy/"
     Then the check passes
 
+  # A site that answers 200 for nonsense would pass every "kept" address, its home page
+  # standing in for the missing page. So the check asks for nonsense first.
+  Scenario: A new site that answers every address is refused before the check
+    When the new site answers 200 for an address it doesn't have
+    Then the check refuses to run, because "a missing page would pass as kept"
+
+  Scenario: A new site with a real "page not found" is checked
+    When the new site answers 404 for an address it doesn't have
+    Then the check goes ahead
+
   Scenario: A live address with no decision, or a redirect with no rule, is flagged
     Given a live address "/rcia/" with no decision
     And "/enquiries/" is redirected to "/contacts/" with no rule in _redirects

@@ -12,6 +12,8 @@
 //     final address. A redirect needs its line in public/_redirects;
 //   - drop: not requested; its reason belongs in notes.
 // --write records each result in the map's `checked` column. Exits 1 on any failure.
+// First it asks for an address the site can't have: a site that answers that with anything
+// but a 404 (a "soft 404") would pass every kept address, so the check refuses to run.
 
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -42,6 +44,21 @@ export async function trailFor(base, path, fetchImpl = fetch) {
 }
 
 /**
+ * Does the new site answer a missing address with a real 404? Cloudflare Pages serves the home
+ * page with a 200 when a build has no 404.html (ferst-core 0.8.0 and later always has one).
+ * Then every "kept" address would answer 200 whatever happened to its page, so the check
+ * can't be trusted. Returns why it refuses, or null when the site answers 404 (or 410).
+ */
+export async function softNotFound(base, fetchImpl = fetch) {
+  const probe = `/ferst-check-missing-${Math.random().toString(36).slice(2, 10)}/`;
+  const end = (await trailFor(base, probe, fetchImpl)).at(-1);
+  if (end.status === 404 || end.status === 410) return null;
+  if (end.status === 0) return `can't reach ${base}`;
+  return `${base} answers ${end.status} at ${probe}, an address it doesn't have, so a missing page would pass as kept. ` +
+    'Build with ferst-core 0.8.0 or later (it adds the "page not found" page), deploy, and check again.';
+}
+
+/**
  * The static checks that need no network: every live address decided, and every redirect
  * backed by a rule in _redirects.
  */
@@ -63,6 +80,11 @@ async function main() {
   if (!base) {
     console.error('usage: check-urls.mjs --base <new site, e.g. https://dev.<project>.pages.dev> [--csv migration/urls.csv] [--redirects public/_redirects] [--write]');
     process.exit(2);
+  }
+  const refusal = await softNotFound(base);
+  if (refusal) {
+    console.error(`REFUSED: ${refusal}`);
+    process.exit(1);
   }
   const csvPath = flag('csv', 'migration/urls.csv');
   const rows = readUrlMap(readFileSync(csvPath, 'utf8'));

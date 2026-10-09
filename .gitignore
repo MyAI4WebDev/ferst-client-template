@@ -28,3 +28,6 @@ public/uploads/
 
 # migrate-site skill workspace (a snapshot of the old site) — temporary, never committed
 .migration/
+
+# wrangler's local state (`npx wrangler pages dev dist`: the redirect check's local copy)
+.wrangler/

@@ -20,7 +20,9 @@ missing or wrong, not to approve. You don't build pages; you report.
      undeliverable* (report it with the reason).
 4. **Old addresses:** `node .claude/skills/migrate-site/scripts/check-urls.mjs --base <copy> --write`.
    The main session gives you the copy's address: the test copy, or a local
-   `npx wrangler pages dev dist`, which applies `_redirects` like Cloudflare does. Every
+   `npx wrangler pages dev dist`, which applies `_redirects` like Cloudflare does. If it
+   **refuses** because the copy answers 200 for an address it can't have, the build has no
+   "page not found" page: report that as the defect and stop this step (no workaround). Every
    live old address must be kept, redirected in **one** step to its new address, or dropped
    with a reason. Each problem it prints is a defect: an undecided row, a missing rule, a
    chain, or a 404.

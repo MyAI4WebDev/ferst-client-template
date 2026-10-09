@@ -3,7 +3,7 @@ import { createBdd } from 'playwright-bdd';
 // The skill's scripts are plain .mjs (they ship to every site's .claude/); these steps drive
 // their pure logic with sample data: no network, no browser.
 import { judge, keyOf, mergeFound, oldStatus, parseSearchConsole } from '../../.claude/skills/migrate-site/scripts/urlmap.mjs';
-import { staticProblems } from '../../.claude/skills/migrate-site/scripts/check-urls.mjs';
+import { softNotFound, staticProblems } from '../../.claude/skills/migrate-site/scripts/check-urls.mjs';
 
 const { Given, When, Then, Before } = createBdd();
 
@@ -15,6 +15,7 @@ let live: { old_status: string; old_url: string } | null = null;
 let row: Row = {};
 let verdict: { ok: boolean; result: string; problem?: string } | null = null;
 let redirectsText = '';
+let refusal: string | null | undefined;
 
 Before(() => {
   found = [];
@@ -24,6 +25,7 @@ Before(() => {
   row = {};
   verdict = null;
   redirectsText = '';
+  refusal = undefined;
 });
 
 const rowFor = (path: string) => rows.find((r) => keyOf(r.old_url) === keyOf(path));
@@ -111,6 +113,18 @@ Then('the check fails with {string}', async ({}, text: string) => {
 
 Then('the check passes', async () => {
   expect(verdict).toMatchObject({ ok: true });
+});
+
+When("the new site answers {int} for an address it doesn't have", async ({}, status: number) => {
+  refusal = await softNotFound('https://dev.example.pages.dev', async () => new Response(null, { status }));
+});
+
+Then('the check refuses to run, because {string}', async ({}, text: string) => {
+  expect(refusal).toContain(text);
+});
+
+Then('the check goes ahead', async () => {
+  expect(refusal).toBeNull();
 });
 
 Given('a live address {string} with no decision', async ({}, path: string) => {

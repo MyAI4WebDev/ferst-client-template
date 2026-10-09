@@ -147,6 +147,10 @@ Delegate to the **migration-auditor** agent. It does four things:
   address is the test copy once the work is on `dev`; before that, serve the build locally
   with `npx wrangler pages dev dist`, which applies `_redirects` like Cloudflare does. Every
   live old address must be kept, redirected in one step, or dropped with a reason: **CLEAN**.
+  The check first asks for an address the site can't have. If the copy answers it with a
+  200 (a "soft 404": a build without a "page not found" page, where Cloudflare serves the
+  home page instead), every kept address would pass whatever happened to its page, so the
+  check refuses to run. The engine has the page from ferst-core 0.8.0.
 
 It writes `MIGRATION-REPORT.md` from the template, merging in every gap the builders
 returned. Fix what it finds that's fixable, then re-run the audit until it's clean.
