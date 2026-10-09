@@ -44,6 +44,10 @@ export default defineConfig({
     // fails to determine the repo when run outside CI / a git checkout.
     env: {
       GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY ?? 'MyAI4WebDev/ferst-client-template',
+      // Build as a TEST COPY (any branch but main) of a known address, so the search
+      // signals are deterministic: noindex everywhere, canonicals on example.org.
+      CF_PAGES_BRANCH: 'dev',
+      FERST_SITE_URL: 'https://example.org',
     },
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],

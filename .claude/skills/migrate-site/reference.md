@@ -107,12 +107,47 @@ Rules:
 
 ## URLs
 
-- Prefer **the same paths as the old site** (e.g. `/about-us/our-team` →
-  `src/content/pages/about-us/our-team.json`), so links, bookmarks and search rankings survive.
-- Where a path has to change (file extensions like `.html` / `.php`, query-string pages, odd
-  slugs), add a permanent redirect to `public/_redirects`, one rule per line:
-  `/old-path /new-path 301`. Keep the rules that are already there.
-- Old post URLs should redirect to `/posts/<slug>`.
+Search rankings belong to addresses: Google ranks each old address on what it learned about it
+over the years. `migration/urls.csv` (step 2b) lists every old address that still works; each
+gets one decision.
+
+- **Keep the old path where you can** (e.g. `/about-us/our-team` →
+  `src/content/pages/about-us/our-team.json`): no redirect needed, nothing to lose.
+- **Redirect in one step, to the final address.** One rule per line in `public/_redirects`,
+  `/old-path /new-path/ 301`, and keep the rules already there. Write the target with its
+  trailing slash: Cloudflare serves pages at `/page/`, so a rule to `/page` makes it add the
+  slash as a second redirect, a chain. Redirect to the **equivalent** page: a redirect to the
+  home page or an unrelated page counts as "not found" for search.
+- **Old posts** go to `/posts/<slug>/`.
+- **Documents** (PDFs and the like) get linked from emails and found through search. If one
+  still works on the old site, bring it across and redirect to it, unless the client says
+  it's obsolete.
+- **WordPress image sizes** (`photo-300x197.jpg`, `photo-150x150.jpg`) go to the full-size
+  image's new address. An image the new site doesn't use and that has no traffic can be
+  dropped (`unused image`).
+- **Query-string addresses** (`/?p=123`, `/?page_id=45`): Cloudflare's `_redirects` matches
+  paths only, so they can't be redirected one by one; they land on the path (usually `/`).
+  Note them; the old site's own pretty address for the same page is the one to redirect.
+- **Limits:** a site can have about 2,000 plain rules (and 100 with splats or placeholders).
+  For whole sections whose files keep their names, use one splat rule:
+  `/wp-content/uploads/* /uploads/:splat 301`.
+- **Dead already?** An address that's already 404 on the old site needs no rule. If the
+  assessment shows it still has backlinks, a redirect can win them back.
+
+## Telling Google (at cutover)
+
+When the domain moves to the new site:
+1. **The day before:** lower the domain's DNS time-to-live, and run the redirect check against
+   the test copy: it must be CLEAN.
+2. **Switch DNS.** Check HTTPS works on the bare domain and `www`, and that one redirects to
+   the other (the one in `siteUrl` is the real one).
+3. **Run the redirect check against the live site:**
+   `check-urls.mjs --base https://<domain> --write`. Fix anything it finds the same day.
+4. **Search Console:** verify the domain if it isn't already (a DNS record); submit
+   `https://<domain>/sitemap.xml`; use URL inspection on the tier A pages to ask for
+   re-crawling. The same domain needs no "change of address"; that's only for a new domain.
+5. **For 4–8 weeks:** watch Search Console's Pages report (new "not found" addresses) and the
+   Performance report. Each new 404 is a one-line `_redirects` fix plus a row in `urls.csv`.
 
 ## Posts
 
@@ -211,6 +246,19 @@ Engine: ferst-core <version> · Date: <date>
 - Brand: colours <brand/ink/surface>, fonts <heading/body> (substitutions noted below)
 - Discovery: <sitemap / feed / WordPress API / crawl-only> · old pages found: <n>
 - Text coverage: <n> pages ≥ 80% · below 80%: <list with % and why>
+
+## Old addresses (`migration/urls.csv`)
+- Found: <n> (snapshot <n>, Wayback <n>, Search Console <n>) · live on the old site: <n> pages, <n> media
+- Kept: <n> · Redirected: <n> · Dropped on purpose: <n> (main reasons)
+- Tier A (earning): <n>: <their addresses>, each kept or redirected to its equivalent
+- Redirect check against <test copy address>: CLEAN on <date> (or the problems still open)
+
+## Telling Google (for the day the domain moves)
+- [ ] Lower the DNS time-to-live the day before; the redirect check on the test copy is CLEAN
+- [ ] Switch DNS; HTTPS on the bare domain and www, one redirecting to the other (`siteUrl`: <address>)
+- [ ] Redirect check against the live site: CLEAN
+- [ ] Search Console: domain verified, sitemap submitted, tier A pages inspected
+- [ ] 4–8 weeks of watching the Pages and Performance reports
 
 ## Restructured for Ferst
 - <what → why, one line each (from the content-architect)>

@@ -104,6 +104,13 @@ commented template; a migrated site fills in its rules, a brand-new site needs n
 There is deliberately **no legacy-site runtime here** — we do not scrape, host or run old
 sites from a Ferst client repo; a redirect table is the whole legacy-content procedure.
 
+The **record** behind the table is `migration/urls.csv` (a client path, committed): every
+address the old site had, whether it still worked, and what became of it: kept, redirected
+or dropped with a reason. The migrate-site skill builds it (`scripts/urls.mjs`: snapshot,
+Wayback Machine, Search Console) and checks it against a copy of the new site
+(`scripts/check-urls.mjs --base <address>`: one step per redirect, no chains, no 404s). Run
+the check again on the live site the day the domain moves.
+
 ## Testing (what runs where)
 
 Client repos carry **no test suite** — `npm run build` (validates content against the engine

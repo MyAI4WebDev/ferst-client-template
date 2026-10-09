@@ -18,16 +18,26 @@ comes across; the old site's look does not.
 Detailed rules, the section-to-block map and the report template are in
 [reference.md](reference.md). Read it before step 4.
 
-The work happens in a temporary, git-ignored workspace, `.migration/`:
+The work happens in two places:
 
 ```
-.migration/
+.migration/           temporary and git-ignored, never committed
   inventory.json      what the old site has          (written by the snapshot)
   pages/*.html|*.txt  each old page, raw + its text  (snapshot)
   media/              every image and document        (snapshot)
   plan.json           what happens to each old URL    (site-inventory agent)
   coverage.json       how much made it across         (coverage check)
+
+migration/            committed: the permanent record
+  urls.csv            every old address and what became of it   (urls.mjs, check-urls.mjs)
+  assessment.json     the platform's assessment of what each old address is worth
+                      (present when the portal's Migrations tab has assessed the site)
 ```
+
+**Search rankings belong to addresses.** Google ranks each old address on what it learned
+about it over the years. An address that stops working loses that, so every old address
+that still works must be **kept, redirected in one step, or dropped on purpose**, and
+`migration/urls.csv` records which, for good.
 
 ## Steps
 
@@ -38,6 +48,12 @@ git checkout -b migrate/<old-domain>
 ```
 Confirm the old site is reachable from this environment (`curl -sI <url>`). If it isn't,
 stop and say so: a cloud session may need network access to that domain allowed.
+
+**Search Console:** ask the client for read access to the old site's Search Console, or
+for its export (Performance → Pages → Export → CSV). It's the only source that shows which
+addresses actually bring visitors. If the platform has assessed the site,
+`migration/assessment.json` is already here: read it first, since its tiers say which pages
+carry search value.
 
 List what the site has from its organisation in the portal: `npx --no-install ferst-modules`
 (its forms, with their ids, and its calendar address). Keep the output: builders place forms
@@ -61,11 +77,32 @@ saves every page and downloads all referenced media into `.migration/`. Read wha
 - **Very large sites:** it stops at `--max-pages 200`. Raise the limit if needed, or report
   the rest.
 
+### 2b. Find every old address → `migration/urls.csv`
+```sh
+node .claude/skills/migrate-site/scripts/urls.mjs <url> [--search-console Pages.csv]
+```
+The crawl only finds what the current site links to. This step merges what the snapshot
+found with the **Wayback Machine** (every address it ever saw on the site, including old
+posts and files nothing links to now) and **Search Console**. Then it checks each address on
+the old site. **Only what still works today needs preserving:** an address that's already
+dead on the old site has lost its rankings. The result is `migration/urls.csv`, one row per
+address. You complete it as you go (`action`, `new_url`) and commit it.
+
+**Tiers** come from the assessment. Without one, treat any address with clicks or
+impressions as tier A.
+- **A, earning:** keep the address (or redirect it to an exact equivalent), and keep the
+  page's title, topic and main headings recognisable. The design is free.
+- **B, live with little traffic:** redirect to the closest new page; the content is free.
+- **C, no value:** let it go, with a reason.
+
 ### 3. Inventory and plan → `site-inventory` agent
-Delegate to the **site-inventory** agent. It reads the snapshot and writes
-`.migration/plan.json`: every old URL with an action (`page`, `post` or `skip` with a reason)
-and its target file. It also returns a short brand summary and proposed navigation. Review
-the plan before building. **Nothing in the inventory may be left without an entry.**
+Delegate to the **site-inventory** agent. It reads the snapshot and `migration/urls.csv`, and
+writes `.migration/plan.json`: every old URL with an action (`page`, `post` or `skip` with a
+reason) and its target file. It also returns a short brand summary and proposed navigation.
+Review the plan before building.
+- **Nothing in the inventory may be left without an entry,** and nor may any **live page
+  row** in `migration/urls.csv`: the crawl may have missed old posts or pages.
+- Tier A pages carry their constraint into the plan's `notes`.
 
 ### 4. Brand and settings (you)
 **Don't write `themeSettings`.** Tokens are set in the portal for every branch. Put the
@@ -90,14 +127,30 @@ returns the list of gaps it couldn't build. Collect every gap; you'll need them 
 - Copy **only the media actually used** from `.migration/media/` into `public/uploads/`,
   following the naming and size rules in [reference.md §Media](reference.md). Report
   oversize files.
-- For every old URL whose path changed, add `old new 301` to `public/_redirects`.
+- **Decide every live row in `migration/urls.csv`,** pages and media alike:
+  - `keep`: the same address;
+  - `redirect`: set `new_url`, and add `old new 301` to `public/_redirects`;
+  - `drop`: give the reason in `notes`.
+
+  [reference.md §URLs](reference.md) has the rules: one step to the final address (with its
+  trailing slash), WordPress image sizes, documents, query-string addresses, and Cloudflare's
+  limit on redirect rules.
 
 ### 7. Audit → `migration-auditor` agent
-Delegate to the **migration-auditor** agent. It does three things:
+Delegate to the **migration-auditor** agent. It does four things:
 - runs `npm run build` and `npm run check:thin`;
 - runs `node .claude/skills/migrate-site/scripts/coverage.mjs` and checks that every old
   page is accounted for and that its text made it across;
-- reviews the low-coverage pages.
+- reviews the low-coverage pages;
+- runs the redirect check against a copy of the new site:
+  `node .claude/skills/migrate-site/scripts/check-urls.mjs --base <address> --write`. The
+  address is the test copy once the work is on `dev`; before that, serve the build locally
+  with `npx wrangler pages dev dist`, which applies `_redirects` like Cloudflare does. Every
+  live old address must be kept, redirected in one step, or dropped with a reason: **CLEAN**.
+  The check first asks for an address the site can't have. If the copy answers it with a
+  200 (a "soft 404": a build without a "page not found" page, where Cloudflare serves the
+  home page instead), every kept address would pass whatever happened to its page, so the
+  check refuses to run. The engine has the page from ferst-core 0.8.0.
 
 It writes `MIGRATION-REPORT.md` from the template, merging in every gap the builders
 returned. Fix what it finds that's fixable, then re-run the audit until it's clean.
@@ -111,24 +164,31 @@ every word:
 - walls of text get **structure**;
 - navigation is **simplified**.
 
-It updates `plan.json` and `_redirects` as it goes. Then **re-run the migration-auditor**
-(coverage must still account for every old page), and add the agent's *Restructured* and
-*Suggestions* lists to `MIGRATION-REPORT.md`.
+It updates `plan.json`, `_redirects` and `migration/urls.csv` as it goes, and restructures
+tier A pages' presentation only. Then **re-run the migration-auditor** (coverage must still
+account for every old page, and the redirect check must still be CLEAN). Add the agent's
+*Restructured* and *Suggestions* lists to `MIGRATION-REPORT.md`.
 
 ### 9. Finish
+Set `siteUrl` in `ferst-site.json` to the site's final public address: the bare domain (e.g.
+`https://example.org`) unless the assessment shows the old site's strength is on `www`. The
+engine builds every page's canonical address, the sitemap and `robots.txt` from it.
 ```sh
-rm -rf .migration
+rm -rf .migration                    # the workspace goes; migration/ (the record) stays
 git add -A && git add -f src/content/posts public/uploads   # these folders are .gitignored for local dev
 git commit -m "content: rebuild <old domain> on Ferst"
 ```
 Open a **pull request**, never push to `main`. Paste `MIGRATION-REPORT.md` into its
-description. In your final message, state the counts and the undeliverable list.
+description. Its *Telling Google* checklist is for the day the domain moves
+([reference.md §Telling Google](reference.md)). In your final message, state the counts, the
+redirect check result and the undeliverable list.
 
 ## Non-negotiables
 - No code, `.astro` files, components, scripts in `src/`, or new block types. A gap is
   reported, never coded around.
 - Use the client's own words: never invent text, prices, names, dates or quotes.
-- Never hot-link the old site. Never commit `.migration/`.
-- Every old URL ends up **built, redirected or reported**.
+- Never hot-link the old site. Never commit `.migration/`; always commit `migration/`.
+- Every old address that still works ends up **kept, redirected in one step, or dropped with
+  a reason** in `migration/urls.csv`, and the redirect check is **CLEAN**.
 - Content is faithful; **presentation is Ferst's**. Restructure freely, but never drop, invent or
   reword facts.

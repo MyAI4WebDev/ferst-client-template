@@ -55,7 +55,12 @@ Read:
   a page, update `.migration/plan.json`: point the old URL's entry at its new home
   (`target`), or list several files in `targets` when its content now lives in more than one
   place (e.g. a newsletter page → its posts). The coverage check then follows it.
-- **Every retired or moved URL gets a 301** in `public/_redirects`.
+- **Every retired or moved URL gets a 301** in `public/_redirects`, written to the final
+  address with its trailing slash (one step, no chain). Update its row in
+  `migration/urls.csv` too: `action` `redirect`, `new_url` its new home.
+- **Tier A pages** (`migration/urls.csv` `tier`, or the plan's `notes`) earn search
+  traffic. Restructure their presentation, but keep their address, title, topic and main
+  headings. Merging one into another page is a decision for a human: suggest it instead.
 - Don't **rewrite** wording to make it shorter or punchier. If text is outdated, repetitive
   or would read better reworded, **suggest** it in your return. A human decides.
 - Data only, from the palette: no code, no new block types. Use the blocks' documented
@@ -67,7 +72,7 @@ Read:
 1. **Restructured:** one line per change, in the form *what → why* (e.g. "Newsletters page →
    38 posts tagged `newsletter`, listed by tag: issues belong in the blog flow"; "Contact +
    Enquiries → /contact with a section per contact: one place to get in touch").
-2. **Redirects added** and **plan.json entries updated**.
+2. **Redirects added**, and **plan.json entries and `migration/urls.csv` rows updated**.
 3. **Suggestions for a human:** rewording, outdated content to confirm or remove, and photos
    that would lift a page.
 4. Say "no restructuring needed" if the site already fits; explain why.
