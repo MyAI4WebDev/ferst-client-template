@@ -17,6 +17,7 @@
 
 import { mkdirSync, writeFileSync, existsSync } from 'node:fs';
 import { join, extname } from 'node:path';
+import { reachOldSite } from './urls.mjs';
 
 const args = process.argv.slice(2);
 const startArg = args.find((a) => !a.startsWith('--'));
@@ -28,7 +29,15 @@ if (!startArg) {
   console.error('usage: snapshot.mjs <url> [--max-pages 200] [--out .migration]');
   process.exit(2);
 }
-const START = new URL(startArg.includes('://') ? startArg : `https://${startArg}`);
+// Over https, or over http when the site's https is broken (urls.mjs reachOldSite).
+const given = new URL(startArg.includes('://') ? startArg : `https://${startArg}`);
+const reach = await reachOldSite(given.href);
+if (reach.error) {
+  console.error(`old site: ${reach.error}`);
+  process.exit(1);
+}
+if (reach.note) console.warn(`old site: ${reach.note}`);
+const START = new URL(`${given.pathname}${given.search}`, reach.origin);
 const MAX_PAGES = Number(flag('max-pages', '200'));
 const OUT = flag('out', '.migration');
 const UA = 'FerstSiteMigration/1.0 (+https://ferst.co.uk)';
@@ -60,8 +69,14 @@ const attr = (tag, name) => {
   const m = tag.match(new RegExp(`\\s${name}\\s*=\\s*("([^"]*)"|'([^']*)'|([^\\s>]+))`, 'i'));
   return m ? decode(m[2] ?? m[3] ?? m[4] ?? '') : null;
 };
+// A same-site link is read over the scheme the site answers on (an absolute https link
+// on a site whose https is broken is still the site's own page).
 const abs = (href, base) => {
-  try { return new URL(href, base); } catch { return null; }
+  try {
+    const u = new URL(href, base);
+    if (sameHost(u) && /^https?:$/.test(u.protocol)) u.protocol = START.protocol;
+    return u;
+  } catch { return null; }
 };
 const normPage = (u) => {
   const n = new URL(u.href);

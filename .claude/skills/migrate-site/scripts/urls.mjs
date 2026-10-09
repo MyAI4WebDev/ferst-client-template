@@ -45,6 +45,42 @@ export function snapshotPaths(dir) {
   return [...pages, ...media].map(pathOf).filter(Boolean);
 }
 
+/**
+ * Where to read the old site. Tries https first (a bare host means https). If that fails
+ * (an expired or self-signed certificate, say) but http answers, reads the site over http
+ * and says why: with its https broken, search engines likely know the old site by its
+ * http:// addresses, so those need checking too on the day the domain moves. Read over
+ * the broken https, every address would look dead and nothing would be kept.
+ * @returns {Promise<{ origin: string, note?: string, error?: string }>}
+ */
+export async function reachOldSite(start, fetchImpl = fetch) {
+  const url = new URL(start.includes('://') ? start : `https://${start}`);
+  const answers = async (origin) => {
+    try {
+      const res = await fetchImpl(new URL('/', origin), { redirect: 'manual', headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(20_000) });
+      await res.body?.cancel?.();
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, code: e?.cause?.code ?? e?.code ?? e?.name ?? 'no answer' };
+    }
+  };
+  const first = await answers(url.origin);
+  if (first.ok) return { origin: url.origin };
+  if (url.protocol === 'https:') {
+    const http = `http://${url.host}`;
+    const second = await answers(http);
+    if (second.ok) {
+      return {
+        origin: http,
+        note: `${url.origin} fails (${first.code}), so the old site is read over http. With its https broken, ` +
+          'search engines likely know it by its http:// addresses: check those too on the day the domain moves.',
+      };
+    }
+    return { origin: url.origin, error: `can't reach ${url.origin} (${first.code}) or ${http} (${second.code})` };
+  }
+  return { origin: url.origin, error: `can't reach ${url.origin} (${first.code})` };
+}
+
 /** One request to the old site: its status, and where it redirects to, without following. */
 async function probe(origin, path, fetchImpl) {
   for (let attempt = 0; attempt < 2; attempt++) {
@@ -92,7 +128,13 @@ async function main() {
     console.error('usage: urls.mjs <old-site-url> [--search-console Pages.csv] [--csv migration/urls.csv] [--snapshot .migration]');
     process.exit(2);
   }
-  const site = new URL(start.includes('://') ? start : `https://${start}`);
+  const reach = await reachOldSite(start);
+  if (reach.error) {
+    console.error(`old site: ${reach.error}`);
+    process.exit(1);
+  }
+  if (reach.note) console.warn(`old site: ${reach.note}`);
+  const site = new URL(reach.origin);
   const csvPath = flag('csv', 'migration/urls.csv');
   const existing = existsSync(csvPath) ? readUrlMap(readFileSync(csvPath, 'utf8')) : [];
 

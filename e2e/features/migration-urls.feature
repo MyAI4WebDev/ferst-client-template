@@ -37,6 +37,26 @@ Feature: Every old address of a migrated site is accounted for
     When the new site answers 308, then 200 at "/clergy/"
     Then the check passes
 
+  # An old site whose https certificate has expired is still there over http (one was, for
+  # two years). Read over https, every address would look dead and nothing would be kept.
+  Scenario: An old site with broken https is read over http, and the migration says why
+    Given the old site's https fails with "CERT_HAS_EXPIRED" but it answers over http
+    When the migration reaches the old site at "https://example.org"
+    Then it reads the old site at "http://example.org"
+    And it warns that search engines likely know its http addresses
+
+  Scenario: An old site with working https is read over https
+    Given the old site answers over https
+    When the migration reaches the old site at "example.org"
+    Then it reads the old site at "https://example.org"
+
+  # On the day the domain moves, an old http address first steps up to https (the domain's
+  # own redirect), then follows its rule. That first step is free.
+  Scenario: An old http address that steps up to https before its redirect still passes
+    Given "/contact/" is redirected to "/contacts/"
+    When the new site answers at "http://example.org": 301 to https, then 301, then 200 at "/contacts/"
+    Then the check passes
+
   # A site that answers 200 for nonsense would pass every "kept" address, its home page
   # standing in for the missing page. So the check asks for nonsense first.
   Scenario: A new site that answers every address is refused before the check
