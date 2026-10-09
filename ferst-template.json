@@ -1,8 +1,8 @@
 {
   "$comment": "Ownership manifest for the Ferst thin-client. `upstream` = where scaffold updates come from (this template). `ownedPaths` = TEMPLATE-owned, force-synced from upstream on every `npm run update` (never hand-edit them in a client); safe to force-sync because a client never edits them — this includes CI that is generic + inert-by-default (unit.yml, smoke.yml) and the overnight update's small caller (update.yml; its steps are the template-only nightly-update.yml, called remotely so a fix needs no change to a site's main). `seedPaths` = scaffold copied ONCE at seed time but NOT force-synced, because a client may legitimately customise them (astro.config.mjs, .gitignore, the opt-in deploy.yml, and public/_redirects legacy-URL rules). `.claude/**` = the agent tooling every client gets (the migrate-site skill + its agents and scripts) — template-owned, so it is force-synced too. `clientPaths` = the client's own data (generated at seed, never touched by an update). `coreRange` = the ferst-core version this scaffold targets. NOTE: the template's own `e2e/` suite and `.github/workflows/e2e.yml` are deliberately in NO list — they are TEMPLATE-ONLY (the fleet journey suite runs here, once per template change; client repos never carry or run e2e — see CLAUDE.md 'Testing'). See docs/UPDATING.md and CLAUDE.md.",
-  "templateVersion": "1.16.0",
+  "templateVersion": "1.16.1",
   "upstream": "https://github.com/MyAI4WebDev/ferst-client-template.git",
-  "coreRange": "^0.7.11",
+  "coreRange": "^0.7.0",
   "ownedPaths": [
     "ferst-template.json",
     "package.json",
