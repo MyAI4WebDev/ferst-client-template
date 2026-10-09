@@ -206,6 +206,13 @@ Compose pages **only** from these blocks.
 - **Blog** — `src/content/posts/*.md` (Markdown + frontmatter; the `/posts` routes are
   engine-provided). The tag vocabulary is `src/content/tags/`.
 - **Media** — put images/files in `public/uploads/` and reference them as `/uploads/<file>`.
+- **The site's address** — `ferst-site.json` `siteUrl`, set by the platform. The engine
+  builds every page's canonical address, the sitemap and `robots.txt` from it, and keeps test
+  copies out of search results by itself. Don't change it by hand.
+- **Old addresses** — a migrated site keeps `migration/urls.csv`: every address its old site
+  had and where it went. When you move, rename or delete a page, keep the promise: add a
+  `public/_redirects` line to the page's new home (one step, with the trailing slash) and
+  update the row. Search rankings belong to addresses.
 
 ## Verify EVERY change — the correctness gate
 A change is not done until both pass:

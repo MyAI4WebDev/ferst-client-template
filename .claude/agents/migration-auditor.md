@@ -18,7 +18,13 @@ missing or wrong, not to approve. You don't build pages; you report.
    - **Below 80% text coverage**: open the old page's `.txt` and the new file. For each
      missing passage, decide whether it's *a builder slip* (fixable: list it) or *genuinely
      undeliverable* (report it with the reason).
-4. **Spot checks** (no build needed):
+4. **Old addresses:** `node .claude/skills/migrate-site/scripts/check-urls.mjs --base <copy> --write`.
+   The main session gives you the copy's address: the test copy, or a local
+   `npx wrangler pages dev dist`, which applies `_redirects` like Cloudflare does. Every
+   live old address must be kept, redirected in **one** step to its new address, or dropped
+   with a reason. Each problem it prints is a defect: an undecided row, a missing rule, a
+   chain, or a 404.
+5. **Spot checks** (no build needed):
    - every `/uploads/...` referenced in `src/content/**` exists in `public/uploads/`;
    - no placeholder starter copy remains (search for the template's sample phrases such as
      "placeholder", "Replace this text");
@@ -29,6 +35,9 @@ missing or wrong, not to approve. You don't build pages; you report.
 ## Write `MIGRATION-REPORT.md` (repo root)
 Use the template in `.claude/skills/migrate-site/reference.md` (*Report template*).
 - **Built:** counts, discovery method, coverage summary.
+- **Old addresses:** the counts from `migration/urls.csv` (found, live, kept, redirected,
+  dropped, tier A) and the redirect check's result, from the template's section.
+- **Telling Google:** the checklist from the template, for the day the domain moves.
 - **Undeliverable:** merge (a) the gaps the page-builders returned (the main session gives
   them to you), (b) what you found in step 3, and (c) the standing items from
   *Undeliverable — always report* that apply to this site (forms, video, fonts, crawl-only

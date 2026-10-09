@@ -12,6 +12,10 @@ not build pages. You decide what happens to every old URL.
   flags), media, nav, brand hints, discovery.
 - `.migration/pages/<slug>.txt` / `.html`: each page's text and raw HTML. Open the text first.
 - `.claude/skills/migrate-site/reference.md`, especially *Pages*, *URLs* and *Posts*.
+- `migration/urls.csv`: every address the old site has or had, whether it still works
+  (`old_status` 200), its traffic (`clicks`, `impressions`) and its `tier`. Old posts and
+  pages the crawl missed are here. If `migration/assessment.json` exists, it's the source of
+  the tiers.
 
 ## Write `.migration/plan.json`
 ```json
@@ -25,6 +29,11 @@ not build pages. You decide what happens to every old URL.
 Rules:
 - **Every page in the inventory gets exactly one entry.** The coverage check fails on any
   that are missing.
+- **So does every live page row in `migration/urls.csv`** (`kind` page, `old_status` 200)
+  that isn't in the inventory. Those are pages the crawl couldn't reach, often old posts:
+  plan them like any other page.
+- **Tier A** (or any row with clicks or impressions, if there's no assessment): say so in
+  `notes` ("tier A: keep title, topic and headings"). Keep its old path.
 - **page vs post:** anything dated (news, blog, sermons, newsletters) is a `post`; the rest is a `page`.
   The home page targets `src/content/pages/index.json`.
 - **Keep the old path** for pages (`/about-us/team` → `src/content/pages/about-us/team.json`).

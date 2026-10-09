@@ -38,7 +38,10 @@ Read:
 7. **Times and dates:** recurring times go only in the one `timetable` page from the plan;
    elsewhere write a link to it ("See service times"). Dated events go in your returned
    **calendar** list (`{ date, time, title, place, repeats, page }`), never into page text.
-8. **Faithful to the content, not the layout.** Choose the block that presents a section
+8. **Tier A pages** (the plan's `notes` say so) earn search traffic. Keep the old page's
+   title, topic and main headings recognisable, and its key wording. The layout is still
+   yours to choose.
+9. **Faithful to the content, not the layout.** Choose the block that presents a section
    *well* in Ferst, not the one that mimics the old page. Don't recreate old visual
    quirks: a sidebar of links, text set in images, decorative dividers, underlines, or
    centred walls of text. A later pass (content-architect) restructures the site, so you
