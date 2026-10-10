@@ -207,9 +207,17 @@ Compose pages **only** from these blocks.
 - **Blog** — `src/content/posts/*.md` (Markdown + frontmatter; the `/posts` routes are
   engine-provided). The tag vocabulary is `src/content/tags/`.
 - **Media** — put images/files in `public/uploads/` and reference them as `/uploads/<file>`.
-- **The site's address** — `ferst-site.json` `siteUrl`, set by the platform. The engine
-  builds every page's canonical address, the sitemap and `robots.txt` from it, and keeps test
-  copies out of search results by itself. Don't change it by hand.
+- **The site's address** — `ferst-site.json` `siteUrl`, set by the platform. From it the
+  engine builds every page's canonical address, the sitemap, `robots.txt`, the news feed
+  (`/posts/rss.xml`), link previews and the structured data search engines read, and keeps
+  test copies out of search results by itself. Don't change it by hand.
+- **The site's details** — `siteSettings`: its name, description, kind (church, school,
+  charity, business), contact and places (each with its address). Search engines read them,
+  and the site shows them, so keep one copy here rather than retyping an address into a
+  page. They're edited in the CMS's "Identity & contact" pane; the portal will take them over.
+- **Writing for search** — give every page a `description` (a sentence on what it offers),
+  describe images that carry meaning (decorative ones stay empty), and write link text that
+  says where it goes (never "click here").
 - **Old addresses** — a migrated site keeps `migration/urls.csv`: every address its old site
   had and where it went. When you move, rename or delete a page, keep the promise: add a
   `public/_redirects` line to the page's new home (one step, with the trailing slash) and

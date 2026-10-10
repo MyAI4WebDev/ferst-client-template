@@ -28,3 +28,18 @@ Feature: A site tells search engines what to index
     Then the answer is a 404
     And the page says it isn't here, with a way back to the home page
     And it names no canonical address
+
+  # ferst-core 0.9: what every page says about the site, from the site's own details.
+  Scenario: Every page tells search engines who the site is
+    Given the visitor opens the "/" page
+    Then the page tells search engines who the site is
+
+  Scenario: A shared link shows a preview of the page
+    Given the visitor opens the "/" page
+    Then a shared link to it shows a preview with its title and a picture
+
+  Scenario: The site's news feed is linked and lists its posts
+    Given the visitor opens the "/" page
+    Then the page links its news feed
+    And the news feed lists the posts, newest first
+
