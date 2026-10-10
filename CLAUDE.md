@@ -19,12 +19,13 @@ owned paths (**your content is never touched**), installs `ferst-core@latest`, a
 `build` + `check:thin`. If it reports a failure, fix or surface that before continuing — do
 not build on a stale or broken base. (`--dry-run` previews; `--no-core` syncs scaffold only.)
 
-`npm run update` adds the public template as a git remote. Before you use `gh`, pin it to this
-repository (`gh repo set-default <owner>/<repo>`, the name from `git remote get-url origin`),
-or it may act on the template instead of this site.
+`npm run update` adds the public template as a git remote. When you use `gh`, name this
+repository in each call (`gh api repos/<owner>/<repo>/…`, the name from `git remote get-url
+origin`), so it never acts on the template. Cloud sessions block GitHub's GraphQL API, so use
+`gh api` there: `gh repo set-default`, `gh issue list` and `gh pr create` need GraphQL.
 
 ## Overnight, the site keeps itself current
-- **00:01 UTC, the `update` Action** (`.github/workflows/update.yml`): when the engine or the
+- **23:43 UTC, the `update` Action** (`.github/workflows/update.yml`): when the engine or the
   template is newer, it runs `npm run update`, pushes the result to `dev` and deploys the
   test copy. A failure pushes nothing and opens an `update-failed` issue.
 - **Later, a scheduled run** follows `.claude/skills/nightly/`: it works this repo's open

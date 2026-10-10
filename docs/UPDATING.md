@@ -25,7 +25,9 @@ command does under the hood, and the manual path if you ever need it.
 Every site carries `.github/workflows/update.yml` (template-owned), a small caller. GitHub only
 schedules a repo's default branch, so the caller must be on the site's `main`. It runs the
 steps in this template's `.github/workflows/nightly-update.yml`, so a fix to them reaches every
-site at its next run, with no change to any site's `main`. Each night at 00:01 UTC:
+site at its next run, with no change to any site's `main`. The schedule itself lives in the
+caller, so changing it does need each site's `main`. Each night at 23:43 UTC (off the top of
+the hour, when GitHub delays scheduled runs most):
 
 1. It compares the site's engine and template versions with the latest. This takes seconds
    and installs nothing; if the site is current, the run ends there.
