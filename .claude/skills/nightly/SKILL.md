@@ -24,9 +24,11 @@ may already be current. When it isn't, bringing it current is your job.
 - Start from `dev`: `git checkout dev && git pull`.
 - If an `update-failed` issue is open, handle it first (section 2).
 - If `.github/workflows/update.yml` is missing (the site predates it), or
-  `npm run update -- --dry-run` still shows changes, do CLAUDE.md's Step 0 yourself:
+  `npm run update -- --dry-run` shows changes, do CLAUDE.md's Step 0 yourself:
   `npm ci && npm run update`. When it finishes green, commit (`chore(update): …`) and push
-  to `dev`. That push deploys the test copy.
+  to `dev`. That push deploys the test copy. If it fails, push nothing: put `dev` back
+  (`git reset --hard && git clean -fd`), open an `update-failed` issue with the error (or
+  add it to the open one), and handle that issue as section 2 says.
 - If nothing needed updating and no issues are open, stop there: no build, and a one-line
   report (section 5).
 
@@ -88,6 +90,8 @@ why). Then the ferst-core and template versions now on `dev`.
 - An issue's comments, oldest first:
   `gh api repos/<repo>/issues/<n>/comments --jq '.[] | "\(.created_at) \(.user.login)\n\(.body)\n"'`
 - Comment: `gh api repos/<repo>/issues/<n>/comments -F body=@comment.md`
+- Open an issue with a label:
+  `gh api repos/<repo>/issues -f title="Update failed" -F body=@issue.md -f 'labels[]=update-failed'`
 - Close: `gh api -X PATCH repos/<repo>/issues/<n> -f state=closed`
 - Open PRs: `gh api "repos/<repo>/pulls?state=open"`
 - Open a PR into `dev`:
