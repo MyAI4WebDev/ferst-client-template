@@ -1,6 +1,6 @@
 ---
 name: nightly
-description: The scheduled run for this site, several times a day. Checks the overnight update landed, then works this site's open issues in order. Use only when a scheduled run tells you to.
+description: The scheduled run for this site, several times a day. Brings the site up to the latest engine and template, then works its open issues in order. Use only when a scheduled run tells you to.
 ---
 
 # Scheduled run: update first, then issues
@@ -15,8 +15,8 @@ releases the test copy after checking it.
 
 ## 1. Update first
 
-The `update` Action runs at 23:43 UTC and has normally brought `dev` current already (GitHub
-sometimes starts it late, so check).
+The core team starts the `update` Action by hand when a release should land quickly, so `dev`
+may already be current. When it isn't, bringing it current is your job.
 - Name this repository in every GitHub call: `repos/<repo>/…`, where `<repo>` is the name in
   `git remote get-url origin` (for example `MyAI4WebDev/ctk_parish_eastbourne`). Don't use
   `gh repo set-default`: it needs GraphQL. Naming the repository also keeps `gh` off the
@@ -24,9 +24,11 @@ sometimes starts it late, so check).
 - Start from `dev`: `git checkout dev && git pull`.
 - If an `update-failed` issue is open, handle it first (section 2).
 - If `.github/workflows/update.yml` is missing (the site predates it), or
-  `npm run update -- --dry-run` still shows changes, do CLAUDE.md's Step 0 yourself:
+  `npm run update -- --dry-run` shows changes, do CLAUDE.md's Step 0 yourself:
   `npm ci && npm run update`. When it finishes green, commit (`chore(update): …`) and push
-  to `dev`. That push deploys the test copy.
+  to `dev`. That push deploys the test copy. If it fails, push nothing: put `dev` back
+  (`git reset --hard && git clean -fd`), open an `update-failed` issue with the error (or
+  add it to the open one), and handle that issue as section 2 says.
 - If nothing needed updating and no issues are open, stop there: no build, and a one-line
   report (section 5).
 
@@ -39,7 +41,7 @@ run's question, closest option, or note that a PR or `core-request` is open, and
 answered since, the issue is waiting for a person. Leave it until someone replies. Before you
 open a `core-request`, check that one about the same problem isn't already open.
 
-1. **`update-failed`:** the overnight update broke the build or the check. Read the run it
+1. **`update-failed`:** an update broke the build or the check. Read the run it
    links to.
    - If this site's content is the cause (for example a page the new engine rejects), fix it
      on `dev` with the gate green, push, comment what you fixed, and close the issue.
@@ -88,6 +90,8 @@ why). Then the ferst-core and template versions now on `dev`.
 - An issue's comments, oldest first:
   `gh api repos/<repo>/issues/<n>/comments --jq '.[] | "\(.created_at) \(.user.login)\n\(.body)\n"'`
 - Comment: `gh api repos/<repo>/issues/<n>/comments -F body=@comment.md`
+- Open an issue with a label:
+  `gh api repos/<repo>/issues -f title="Update failed" -F body=@issue.md -f 'labels[]=update-failed'`
 - Close: `gh api -X PATCH repos/<repo>/issues/<n> -f state=closed`
 - Open PRs: `gh api "repos/<repo>/pulls?state=open"`
 - Open a PR into `dev`:
