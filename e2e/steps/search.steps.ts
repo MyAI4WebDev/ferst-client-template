@@ -46,3 +46,32 @@ Then('the build marks every file noindex for Cloudflare, PDFs included', async (
 Then('its canonical address is {string}', async ({ page }, href: string) => {
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', href);
 });
+
+Then('the page tells search engines who the site is', async ({ page }) => {
+  const json = await page.locator('script[type="application/ld+json"]').textContent();
+  const graph = JSON.parse(json ?? '{}')['@graph'] as Array<Record<string, unknown>>;
+  const settings = JSON.parse(readFileSync(new URL('../../src/content/siteSettings/index.json', import.meta.url), 'utf8'));
+  expect(graph[0]).toMatchObject({ '@id': 'https://example.org/#organization', name: settings.identity.siteTitle, url: 'https://example.org/' });
+  expect(graph.find((n) => n['@type'] === 'WebSite')).toMatchObject({ url: 'https://example.org/', publisher: { '@id': 'https://example.org/#organization' } });
+});
+
+Then('a shared link to it shows a preview with its title and a picture', async ({ page }) => {
+  await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', /\S/);
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://example.org/');
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /^https:\/\/example\.org\//);
+});
+
+Then('the page links its news feed', async ({ page }) => {
+  await expect(page.locator('link[rel="alternate"][type="application/rss+xml"]')).toHaveAttribute('href', '/posts/rss.xml');
+});
+
+Then('the news feed lists the posts, newest first', async ({ page }) => {
+  const res = await page.request.get('/posts/rss.xml');
+  expect(res.status()).toBe(200);
+  const xml = await res.text();
+  expect(xml).toContain('<rss version="2.0"');
+  const dates = [...xml.matchAll(/<pubDate>([^<]+)<\/pubDate>/g)].map((m) => Date.parse(m[1]));
+  expect(dates.length).toBeGreaterThan(0);
+  expect([...dates].sort((a, b) => b - a)).toEqual(dates);
+});
+
