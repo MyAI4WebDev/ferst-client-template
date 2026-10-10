@@ -10,7 +10,9 @@ name: update
 
 on:
   schedule:
-    - cron: '1 0 * * *' # 00:01 UTC: midnight in UK winter, 01:01 in UK summer
+    # 23:43 UTC (00:43 in UK summer). Off the top of the hour, when GitHub delays scheduled
+    # runs most (00:01 started over four hours late), so it's done before the 02:00 issue run.
+    - cron: '43 23 * * *'
   workflow_dispatch:
     inputs:
       force:

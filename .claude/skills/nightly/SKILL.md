@@ -15,10 +15,12 @@ releases the test copy after checking it.
 
 ## 1. Update first
 
-The `update` Action ran shortly after midnight, and has normally brought `dev` current already.
-- Pin `gh` to this repository before anything else: `gh repo set-default <owner>/<repo>`,
-  taking the name from `git remote get-url origin`. An update adds the public template as a
-  git remote, and `gh` could otherwise act on the template instead of this site.
+The `update` Action runs at 23:43 UTC and has normally brought `dev` current already (GitHub
+sometimes starts it late, so check).
+- Name this repository in every GitHub call: `repos/<repo>/…`, where `<repo>` is the name in
+  `git remote get-url origin` (for example `MyAI4WebDev/ctk_parish_eastbourne`). Don't use
+  `gh repo set-default`: it needs GraphQL. Naming the repository also keeps `gh` off the
+  public template, which an update adds as a git remote.
 - Start from `dev`: `git checkout dev && git pull`.
 - If an `update-failed` issue is open, handle it first (section 2).
 - If `.github/workflows/update.yml` is missing (the site predates it), or
@@ -72,13 +74,13 @@ why). Then the ferst-core and template versions now on `dev`.
 
 ## REST commands
 
-`{owner}/{repo}` is filled in by `gh` from the repository you pinned in section 1.
+`<repo>` is this repository's name (section 1): write it out in every command.
 - Open issues with a label, oldest first (skip entries that have a `pull_request` key):
-  `gh api "repos/{owner}/{repo}/issues?labels=client-request&state=open&sort=created&direction=asc"`
-- Comment: `gh api repos/{owner}/{repo}/issues/<n>/comments -F body=@comment.md`
-- Close: `gh api -X PATCH repos/{owner}/{repo}/issues/<n> -f state=closed`
-- Open PRs: `gh api "repos/{owner}/{repo}/pulls?state=open"`
+  `gh api "repos/<repo>/issues?labels=client-request&state=open&sort=created&direction=asc"`
+- Comment: `gh api repos/<repo>/issues/<n>/comments -F body=@comment.md`
+- Close: `gh api -X PATCH repos/<repo>/issues/<n> -f state=closed`
+- Open PRs: `gh api "repos/<repo>/pulls?state=open"`
 - Open a PR into `dev`:
-  `gh api repos/{owner}/{repo}/pulls -f title="<title>" -f head="<branch>" -f base=dev -F body=@pr.md`.
+  `gh api repos/<repo>/pulls -f title="<title>" -f head="<branch>" -f base=dev -F body=@pr.md`.
   Start the body with `Opened by the nightly run.` and `Refs #<n>`.
-- Whether a PR was merged: `gh api repos/{owner}/{repo}/pulls/<pr> --jq .merged`
+- Whether a PR was merged: `gh api repos/<repo>/pulls/<pr> --jq .merged`
