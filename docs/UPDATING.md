@@ -20,14 +20,15 @@ The authoritative owned-path list is `ferst-template.json` `ownedPaths` (the har
 the manual example below is illustrative and may lag). The sections below explain what the
 command does under the hood, and the manual path if you ever need it.
 
-### Overnight, automatically
+### By hand, or by the site's scheduled run
 
 Every site carries `.github/workflows/update.yml` (template-owned), a small caller. GitHub only
-schedules a repo's default branch, so the caller must be on the site's `main`. It runs the
+dispatches a repo's default branch, so the caller must be on the site's `main`. It runs the
 steps in this template's `.github/workflows/nightly-update.yml`, so a fix to them reaches every
-site at its next run, with no change to any site's `main`. The schedule itself lives in the
-caller, so changing it does need each site's `main`. Each night at 23:43 UTC (off the top of
-the hour, when GitHub delays scheduled runs most):
+site at its next run, with no change to any site's `main`. It used to run every night. Since
+2026-10-10 the core team starts it by hand when a release should land (to save Actions
+minutes), and the site's scheduled agent run (`.claude/skills/nightly/`) applies a waiting
+update itself in between. When it runs:
 
 1. It compares the site's engine and template versions with the latest. This takes seconds
    and installs nothing; if the site is current, the run ends there.
@@ -38,8 +39,9 @@ the hour, when GitHub delays scheduled runs most):
 4. A failed build or check pushes nothing and opens (or adds to) one `update-failed` issue.
 
 It never touches `main`: releasing the test copy to the live site stays a person's decision.
-Run it by hand from the Actions tab; the `force` option runs the whole path even when nothing
-is newer.
+Start it from the Actions tab, or with
+`gh api -X POST repos/<repo>/actions/workflows/update.yml/dispatches -f ref=main`. The `force`
+option runs the whole path even when nothing is newer.
 
 ## 1. Engine fixes — the common case (no repo touched)
 

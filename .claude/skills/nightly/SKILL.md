@@ -1,6 +1,6 @@
 ---
 name: nightly
-description: The scheduled run for this site, several times a day. Checks the overnight update landed, then works this site's open issues in order. Use only when a scheduled run tells you to.
+description: The scheduled run for this site, several times a day. Brings the site up to the latest engine and template, then works its open issues in order. Use only when a scheduled run tells you to.
 ---
 
 # Scheduled run: update first, then issues
@@ -15,8 +15,8 @@ releases the test copy after checking it.
 
 ## 1. Update first
 
-The `update` Action runs at 23:43 UTC and has normally brought `dev` current already (GitHub
-sometimes starts it late, so check).
+The core team starts the `update` Action by hand when a release should land quickly, so `dev`
+may already be current. When it isn't, bringing it current is your job.
 - Name this repository in every GitHub call: `repos/<repo>/…`, where `<repo>` is the name in
   `git remote get-url origin` (for example `MyAI4WebDev/ctk_parish_eastbourne`). Don't use
   `gh repo set-default`: it needs GraphQL. Naming the repository also keeps `gh` off the
@@ -39,7 +39,7 @@ run's question, closest option, or note that a PR or `core-request` is open, and
 answered since, the issue is waiting for a person. Leave it until someone replies. Before you
 open a `core-request`, check that one about the same problem isn't already open.
 
-1. **`update-failed`:** the overnight update broke the build or the check. Read the run it
+1. **`update-failed`:** an update broke the build or the check. Read the run it
    links to.
    - If this site's content is the cause (for example a page the new engine rejects), fix it
      on `dev` with the gate green, push, comment what you fixed, and close the issue.

@@ -1,5 +1,5 @@
-# The overnight update's steps, run for each site by its own `update.yml`: a small caller on
-# the site's `main`, since GitHub only schedules a repo's default branch. Living here, a fix
+# The update's steps, run for each site by its own `update.yml`: a small caller on
+# the site's `main`, since GitHub only dispatches a repo's default branch. Living here, a fix
 # reaches every site at its next run, with no change to any site's `main`.
 #
 # It first compares versions (seconds; nothing is installed). Only when the engine or the
@@ -19,6 +19,11 @@ on:
 
 jobs:
   update:
+    # No scheduled runs (paused 2026-10-10 to save Actions minutes): the core team starts an
+    # update by hand when a release should land, and each site's scheduled agent run applies
+    # a waiting update itself. A site's `main` may still carry the old nightly schedule until
+    # its next release; those runs are skipped here, at no cost.
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     concurrency:

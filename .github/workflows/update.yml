@@ -1,18 +1,16 @@
-# Overnight update: keeps this site on the latest engine (ferst-core) and template.
+# Update: keeps this site on the latest engine (ferst-core) and template.
 #
-# GitHub runs scheduled workflows from a repo's default branch, so this small file lives on
-# `main`. The steps live in the template (nightly-update.yml), so a fix there reaches every
-# site without a change to its `main`. They work on `dev`, the test copy, and never touch
-# `main`: the live site changes only when a person releases the test copy.
+# Started by hand (the Actions tab, or the API) when a release should land; in between, the
+# site's scheduled agent run applies a waiting update itself. GitHub dispatches workflows from
+# a repo's default branch, so this small file lives on `main`. The steps live in the template
+# (nightly-update.yml), so a fix there reaches every site without a change to its `main`. They
+# work on `dev`, the test copy, and never touch `main`: the live site changes only when a
+# person releases the test copy.
 #
 # Template-owned (ferst-template.json ownedPaths): don't edit it in a site's repo.
 name: update
 
 on:
-  schedule:
-    # 23:43 UTC (00:43 in UK summer). Off the top of the hour, when GitHub delays scheduled
-    # runs most (00:01 started over four hours late), so it's done before the 02:00 issue run.
-    - cron: '43 23 * * *'
   workflow_dispatch:
     inputs:
       force:

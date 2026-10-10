@@ -12,10 +12,11 @@ name: smoke (live health)
 #   SMOKE_EXPECT  optional literal string that must appear on the page (e.g. the site name)
 #
 # The platform deploys via Cloudflare Pages (async), so on push we retry for a few
-# minutes to let the new deploy go live before asserting.
+# minutes to let the new deploy go live before asserting. Only a push to `main` changes the
+# live site (a release, or an editor's live edit), so a push to `dev` doesn't run it.
 on:
   push:
-    branches: [main, dev]
+    branches: [main]
   schedule:
     - cron: '17 6 * * *'   # daily catch-all, independent of pushes
   workflow_dispatch:
