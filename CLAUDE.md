@@ -24,15 +24,15 @@ repository in each call (`gh api repos/<owner>/<repo>/…`, the name from `git r
 origin`), so it never acts on the template. Cloud sessions block GitHub's GraphQL API, so use
 `gh api` there: `gh repo set-default`, `gh issue list` and `gh pr create` need GraphQL.
 
-## Overnight, the site keeps itself current
+## The site keeps itself current
 - **23:43 UTC, the `update` Action** (`.github/workflows/update.yml`): when the engine or the
   template is newer, it runs `npm run update`, pushes the result to `dev` and deploys the
   test copy. A failure pushes nothing and opens an `update-failed` issue.
-- **Later, a scheduled run** follows `.claude/skills/nightly/`: it works this repo's open
-  issues and leaves comments and PRs for the morning.
+- **Several times a day, a scheduled run** follows `.claude/skills/nightly/`: it checks the
+  update landed, works this repo's open issues, and leaves comments and PRs.
 
-So `git pull` before you start, and expect overnight commits on `dev`. Neither ever touches
-`main`: the live site changes only when a person releases the test copy.
+So `git pull` before you start, and expect commits on `dev` you didn't make. Neither ever
+touches `main`: the live site changes only when a person releases the test copy.
 
 ## Rebuilding an existing website from a URL
 Use the **`migrate-site` skill** (`.claude/skills/migrate-site/`). It snapshots the old site

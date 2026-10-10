@@ -1,12 +1,12 @@
 ---
 name: nightly
-description: The scheduled overnight run for this site. Checks the overnight update landed, then works this site's open issues in order. Use only when a scheduled run tells you to.
+description: The scheduled run for this site, several times a day. Checks the overnight update landed, then works this site's open issues in order. Use only when a scheduled run tells you to.
 ---
 
-# Overnight: update first, then issues
+# Scheduled run: update first, then issues
 
-You run at night with nobody to ask. The site's people and the core team read what you
-leave in the morning, so say plainly what you did and what you couldn't. Everything you do
+You run several times a day with nobody to ask. The site's people and the core team read
+what you leave later, so say plainly what you did and what you couldn't. Everything you do
 lands on `dev`, the **test copy**. The live site (`main`) changes only when a person
 releases the test copy after checking it.
 
@@ -27,9 +27,17 @@ sometimes starts it late, so check).
   `npm run update -- --dry-run` still shows changes, do CLAUDE.md's Step 0 yourself:
   `npm ci && npm run update`. When it finishes green, commit (`chore(update): …`) and push
   to `dev`. That push deploys the test copy.
-- If no issues are open, you're done (section 5).
+- If nothing needed updating and no issues are open, stop there: no build, and a one-line
+  report (section 5).
 
 ## 2. Then the issues, oldest first, by kind
+
+You run several times a day, so never act twice on the same thing. Read an issue's comments
+before you act on it. Your comments may appear under the same GitHub account as the core
+team's, so go by what a comment says, not who posted it: if the newest comment is an earlier
+run's question, closest option, or note that a PR or `core-request` is open, and nobody has
+answered since, the issue is waiting for a person. Leave it until someone replies. Before you
+open a `core-request`, check that one about the same problem isn't already open.
 
 1. **`update-failed`:** the overnight update broke the build or the check. Read the run it
    links to.
@@ -43,7 +51,7 @@ sometimes starts it late, so check).
    open a PR into `dev`: the core team reviews every editor's request before it reaches the
    test copy, so never push one straight to `dev`. Comment on the issue as CLAUDE.md says
    (plain words, no PR link, nothing about how it was done), and leave the issue open. When a
-   later night finds that PR merged, comment where to see the change on the test copy, then
+   later run finds that PR merged, comment where to see the change on the test copy, then
    close the issue. Skip a request that already has an open PR.
    - If the engine would have to change, open a `core-request` in this repo, mention it on
      the editor's issue, and leave that issue open.
@@ -57,7 +65,7 @@ task they give you.
 ## 3. One issue at a time
 
 Finish each issue completely, with `npm run build` and `npm run check:thin` green, before
-you start the next. Comment and close as you go: if the run stops part-way, the next night
+you start the next. Comment and close as you go: if the run stops part-way, the next run
 carries on with whatever is still open.
 
 ## 4. Never
@@ -77,6 +85,8 @@ why). Then the ferst-core and template versions now on `dev`.
 `<repo>` is this repository's name (section 1): write it out in every command.
 - Open issues with a label, oldest first (skip entries that have a `pull_request` key):
   `gh api "repos/<repo>/issues?labels=client-request&state=open&sort=created&direction=asc"`
+- An issue's comments, oldest first:
+  `gh api repos/<repo>/issues/<n>/comments --jq '.[] | "\(.created_at) \(.user.login)\n\(.body)\n"'`
 - Comment: `gh api repos/<repo>/issues/<n>/comments -F body=@comment.md`
 - Close: `gh api -X PATCH repos/<repo>/issues/<n> -f state=closed`
 - Open PRs: `gh api "repos/<repo>/pulls?state=open"`
