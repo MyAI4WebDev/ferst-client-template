@@ -183,6 +183,11 @@ suite of its own and you must **not create one**:
 (The `smoke` workflow shipped in `.github/workflows/` is a live-site health check, not a
 test suite; it stays inert unless the platform sets its `SMOKE_URL` variable.)
 
+**Test content stays off the live site.** To try something on the test copy with a post, page
+or picture, name its file `test-…` (for example `src/content/posts/test-gallery.md`) and delete
+it when you're done. A release (a PR into `main`) is refused while the test copy still has a
+`test-` file the live site doesn't.
+
 ## How pages work
 A page is an ordered list of **typed blocks**, stored as one JSON file:
 
