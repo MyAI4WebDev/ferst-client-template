@@ -33,6 +33,24 @@ jobs:
       cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
+      # A release (a PR into main) never carries test content to the live site. Test posts,
+      # pages and pictures are named `test-…` (CLAUDE.md, "Testing") and deleted after the
+      # test; this refuses any left on the test copy that the live site doesn't already have.
+      - name: No test content reaches the live site
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
+        run: |
+          git fetch --no-tags --depth=1 origin main
+          left=()
+          while IFS= read -r f; do
+            [ -n "$f" ] || continue
+            git cat-file -e "FETCH_HEAD:$f" 2>/dev/null || left+=("$f")
+          done <<< "$(git ls-files src/content public/uploads | grep -E '(^|/)test-[^/]*$' || true)"
+          if [ "${#left[@]}" -gt 0 ]; then
+            echo "::error::Test content would reach the live site. Delete it from dev first:"
+            printf '%s\n' "${left[@]}"
+            exit 1
+          fi
+          echo "No test content in this release."
       - uses: actions/setup-node@v4
         with:
           node-version: 20
