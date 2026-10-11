@@ -24,7 +24,9 @@ may already be current. When it isn't, bringing it current is your job.
 - Start from `dev`: `git checkout dev && git pull`.
 - If an `update-failed` issue is open, handle it first (section 2).
 - If `.github/workflows/update.yml` is missing (the site predates it), or
-  `npm run update -- --dry-run` shows changes, do CLAUDE.md's Step 0 yourself:
+  `npm run update -- --dry-run` shows changes, do CLAUDE.md's Step 0 yourself. Changes are
+  scaffold files to sync, or a newer ferst-core than the installed one: the dry run says it
+  WOULD be installed (an older updater prints `installed=… latest=…`). Step 0:
   `npm ci && npm run update`. When it finishes green, commit (`chore(update): …`) and push
   to `dev`. That push deploys the test copy. If it fails, push nothing: put `dev` back
   (`git reset --hard && git clean -fd`), open an `update-failed` issue with the error (or
