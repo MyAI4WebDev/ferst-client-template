@@ -22,6 +22,14 @@ may already be current. When it isn't, bringing it current is your job.
   `gh repo set-default`: it needs GraphQL. Naming the repository also keeps `gh` off the
   public template, which an update adds as a git remote.
 - Start from `dev`: `git checkout dev && git pull`.
+- **Bring in the live site's edits.** Editors publish straight to `main` with the CMS, so `dev`
+  falls behind it. Run `git fetch origin main && git merge --no-edit origin/main`. If it merges
+  cleanly and `npm ci`, `npm run build` and `npm run check:thin` pass, push it to `dev`: the test
+  copy then shows the live content plus what's waiting for release, and you work from what's
+  published. If the merge conflicts or the gate fails, undo it (`git merge --abort`, or
+  `git reset --hard origin/dev` after a failed gate), open a `sync-conflict` issue naming the
+  files (or add to the open one), and carry on with the rest of the run on `dev` as it is. The
+  core team resolves it: never settle a conflict yourself.
 - If an `update-failed` issue is open, handle it first (section 2).
 - If `.github/workflows/update.yml` is missing (the site predates it), or
   `npm run update -- --dry-run` shows changes, do CLAUDE.md's Step 0 yourself. Changes are
@@ -63,7 +71,7 @@ open a `core-request`, check that one about the same problem isn't already open.
 **Unclear, or not possible with the blocks?** Comment your question or the closest option,
 leave the issue open, and move on (CLAUDE.md). Never write code to fill a gap.
 
-`core-request` issues are the core team's to answer. Only read their replies, and act on a
+`core-request` and `sync-conflict` issues are the core team's to answer. Only read their replies, and act on a
 task they give you.
 
 ## 3. One issue at a time
