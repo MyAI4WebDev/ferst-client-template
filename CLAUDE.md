@@ -25,16 +25,19 @@ origin`), so it never acts on the template. Cloud sessions block GitHub's GraphQ
 `gh api` there: `gh repo set-default`, `gh issue list` and `gh pr create` need GraphQL.
 
 ## The site keeps itself current
-- **Several times a day, a scheduled run** follows `.claude/skills/nightly/`: it brings `dev`
-  up to the latest engine and template when a release is waiting, works this repo's open
-  issues, and leaves comments and PRs.
+- **Several times a day, a scheduled run** follows `.claude/skills/nightly/`: it first merges
+  the live site's edits (`main`) into `dev`, so the test copy shows the live content plus what's
+  waiting for release. Then it brings `dev` up to the latest engine and template when a release
+  is waiting, works this repo's open issues, and leaves comments and PRs.
 - **The `update` Action** (`.github/workflows/update.yml`), when the core team starts it to land
   a release sooner: when the engine or the template is newer, it runs `npm run update`,
   pushes the result to `dev` and deploys the test copy. A failure pushes nothing and opens an
   `update-failed` issue.
 
 So `git pull` before you start, and expect commits on `dev` you didn't make. Neither ever
-touches `main`: the live site changes only when a person releases the test copy.
+touches `main`: the live site changes only when a person releases the test copy. Before changing
+content on `dev`, merge `main` in (`git fetch origin main && git merge origin/main`), so you work
+from what's live and a release carries only your change.
 
 ## Rebuilding an existing website from a URL
 Use the **`migrate-site` skill** (`.claude/skills/migrate-site/`). It snapshots the old site
