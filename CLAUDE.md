@@ -76,6 +76,19 @@ design.** Never write code to fill a gap. Report it.
    an old site's or a person's own Google Calendar. If a form or calendar the site needs
    isn't there, report it (or file a `core-request`) so it's created in the portal.
 
+6. **Everyone can use it (accessibility, WCAG 2.2 AA).** The engine gives every page a skip
+   link, landmarks, readable colours and the statement at `/accessibility`. What it can't do
+   is the content, which is yours:
+   - **Describe every picture that carries meaning** in its `alt` (who or what it shows, in a
+     short sentence: *"Parishioners outside the church after the Easter Vigil"*). Leave `alt`
+     empty only for decoration. Never `"image"`, a file name or *"photo of"*.
+   - **Links say where they go.** *"Read the safeguarding policy"*, never *"click here"* or
+     *"more"*. A link to a document names it and its type: *"Parish newsletter, March (PDF)"*.
+   - **Headings in order.** The page title is the only `h1`; a `heading` block under it is
+     level 2, its sub-points level 3. Never pick a level for its size.
+   - **Times, dates and contact details are text,** never only inside a picture. When
+     migrating a poster or a scanned notice, type its words into the page.
+
 ## The one rule that must not be broken
 **Author data, not code.** All routing, layouts, components, page + blog rendering, the
 block schema and theming live in the `ferst-core` package (installed in `node_modules`,
