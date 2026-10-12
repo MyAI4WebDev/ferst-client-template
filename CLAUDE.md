@@ -82,6 +82,7 @@ design.** Never write code to fill a gap. Report it.
    - **Describe every picture that carries meaning** in its `alt` (who or what it shows, in a
      short sentence: *"Parishioners outside the church after the Easter Vigil"*). Leave `alt`
      empty only for decoration. Never `"image"`, a file name or *"photo of"*.
+     A post's picture is described in its `heroImageAlt` (the CMS's *Picture description*).
    - **Links say where they go.** *"Read the safeguarding policy"*, never *"click here"* or
      *"more"*. A link to a document names it and its type: *"Parish newsletter, March (PDF)"*.
    - **Headings in order.** The page title is the only `h1`; a `heading` block under it is
