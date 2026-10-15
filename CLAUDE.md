@@ -120,6 +120,18 @@ labelled `client-request`:
   page.
 - **`form-placement`:** add one of the organisation's portal forms, placed by id.
 - **`calendar-switch`:** point `calendarSettings.embedUrl` at the portal calendar.
+- **`site-change`:** a general change asked for in the portal's Requests tab, not about one
+  page. The issue says what they want in their own words.
+- **`page-setup`:** a page's first setup, from the portal's Pages tab. It names the page file,
+  the design the client chose, and their answers from big to small: the big picture (what the
+  page is for), what each of the design's sections should say, sections they want added, and
+  anything else. The design's blocks are in the issue as JSON. Rebuild that page from the
+  design, in the client's own words: the big picture sets the tone, each section is filled from
+  its answer (a blank answer is filled from the big picture and the rest), and each section they
+  asked for is added where it fits best, using the engine's blocks. Keep the page's address and
+  anything the answers don't replace. Contact details, forms and calendars come from the portal,
+  so place them as the design does, never type them in. A page is set up once; later changes
+  come as ordinary requests.
 
 The issue body ends with a hidden `<!-- ferst: … -->` block saying who asked and about what.
 Leave it alone.
