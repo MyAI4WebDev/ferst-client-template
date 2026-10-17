@@ -130,8 +130,8 @@ labelled `client-request`:
   its answer (a blank answer is filled from the big picture and the rest), and each section they
   asked for is added where it fits best, using the engine's blocks. Keep the page's address and
   anything the answers don't replace. Contact details, forms and calendars come from the portal,
-  so place them as the design does, never type them in. A page is set up once; later changes
-  come as ordinary requests.
+  so place them as the design does, never type them in. A page can be set up again later (a
+  redesign): rebuild it from the new design and answers in the same way, replacing what was there.
 
 The issue body ends with a hidden `<!-- ferst: … -->` block saying who asked and about what.
 Leave it alone.
