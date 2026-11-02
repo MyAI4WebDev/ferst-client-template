@@ -69,9 +69,13 @@ design.** Never write code to fill a gap. Report it.
    so a person can enter them. Never copy dates into pages.
 5. **Forms and calendars come from the portal.** The organisation's forms and calendars
    live in the Ferst portal (the Forms and Events modules), never in this repo. Run
-   `npx --no-install ferst-modules` to see what this site has. Place a form with
-   `{ "type": "form", "form": "<id>" }`: it reads its fields and where it sends from the
-   portal at build, so never copy a form's fields or wire a `contactForm` `action` by hand.
+   `npx --no-install ferst-modules` to see what this site has. Place a form by its name on
+   this site, exactly as that prints it: `{ "type": "form", "form": "<name>" }`. It reads its
+   fields and where it sends from the portal at build, through this site's `siteId` in
+   `ferst-site.json`, so never copy a form's fields or wire a `contactForm` `action` by hand.
+   The organisation decides which form fills each name, and may swap or move one in the portal
+   with no change here, so never replace a name with a form's id. Pages from before names give
+   a form's id (`form_…`), which still works: leave it as it is.
    Show the calendar by setting `calendarSettings.embedUrl` to the address it prints, never
    an old site's or a person's own Google Calendar. If a form or calendar the site needs
    isn't there, report it (or file a `core-request`) so it's created in the portal.
@@ -118,7 +122,8 @@ The site's editors ask for changes, and the platform opens each one as an issue 
 labelled `client-request`:
 - **`page-change`:** "Requested changes" on a page in the content editor. The issue names the
   page.
-- **`form-placement`:** add one of the organisation's portal forms, placed by id.
+- **`form-placement`:** add one of the organisation's portal forms, placed by its name on this
+  site (the issue gives the block).
 - **`calendar-switch`:** point `calendarSettings.embedUrl` at the portal calendar.
 - **`site-change`:** a general change asked for in the portal's Requests tab, not about one
   page. The issue says what they want in their own words.

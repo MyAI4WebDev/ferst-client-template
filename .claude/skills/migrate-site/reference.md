@@ -77,7 +77,7 @@ Map each section of the old page to the closest block. Typical matches:
 | "Latest news" section | `latestPosts` |
 | Bullet lists | `list` |
 | Side-by-side or grouped layout | `section`, `grid`, `stack` |
-| A form (contact, booking, enquiry) | `form` placed by id: `{ "type": "form", "form": "<id>" }`, from `npx --no-install ferst-modules`. No matching form? Leave it out and list it under *Forms to create in the portal*. |
+| A form (contact, booking, enquiry) | `form` placed by its name on this site: `{ "type": "form", "form": "<name>" }`, from `npx --no-install ferst-modules`. No matching form? Leave it out and list it under *Forms to create in the portal*. |
 
 Rules:
 
