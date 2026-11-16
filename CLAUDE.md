@@ -137,6 +137,11 @@ labelled `client-request`:
   anything the answers don't replace. Contact details, forms and calendars come from the portal,
   so place them as the design does, never type them in. A page can be set up again later (a
   redesign): rebuild it from the new design and answers in the same way, replacing what was there.
+- **`new-page`:** a new page, from "Add a new page" on the portal's Pages tab. The issue names
+  the page, its address and file, and says in their own words what it should hold. Make it
+  from the engine's blocks in the site's style, add it to the menu and the footer under its
+  name, and publish it or add it as a draft **as the issue says** (it says which, from the
+  plan's allowance; see "Published pages and drafts" below).
 
 The issue body ends with a hidden `<!-- ferst: … -->` block saying who asked and about what.
 Leave it alone.
@@ -259,7 +264,22 @@ A page is an ordered list of **typed blocks**, stored as one JSON file:
 - `src/content/pages/<slug>.json` → served at `/<slug>` automatically (the engine's catch-all).
 - `src/content/pages/index.json` is the **home** page, served at `/`.
 - Nested slugs are folders: `src/content/pages/about-us/team.json` → `/about-us/team`.
-- **To add a page, add a JSON file.** No route, no code.
+- **To add a page, add a JSON file.** No route, no code. Add one only when a request asks.
+
+### Published pages and drafts
+A page is **published** (on the site) or a **draft** (`"draft": true`: kept here, but not
+built, and the menu leaves out links to it). The site's plan publishes a number of pages,
+which the platform writes into `ferst-site.json` as `pages` (absent or `null`: no limit). The
+home page counts; the posts page and the "page not found" page (`404.json`) never do.
+- **Whether a page is published is the owner's choice**, made on the portal's Pages tab.
+  Never add or remove `draft` on an existing page, whatever a request says: if someone asks
+  to publish or hide a page, tell them it's a switch on the Pages tab.
+- **A page you add is published only while the plan has room**; otherwise add it with
+  `"draft": true` and say so in your comment: they publish it from the Pages tab, making
+  another page a draft or choosing a bigger plan. A `new-page` request says which.
+- **The release checks it:** the `guard` check on the release PR fails if more pages are
+  published than `pages` allows (`npx ferst-check-pages`). Never change `pages` in
+  `ferst-site.json`: it's the platform's.
 
 Each file matches the engine's `pageSchema`, roughly:
 `{ "title": "...", "description": "...", "blocks": [ { "type": "...", ...props }, ... ] }`.
