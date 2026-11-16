@@ -77,6 +77,9 @@ open a `core-request`, check that one about the same problem isn't already open.
    - A `page-setup` request rebuilds one page from the design and the answers in the issue
      (CLAUDE.md, "Requests from the site's people"). It's a bigger job than a change: read
      all the answers first, then build the page in one go.
+   - A `new-page` request adds a page: published, or as a draft when the plan's pages are all
+     in use, as the issue says (CLAUDE.md, "Published pages and drafts"). Never publish or
+     draft an existing page: that's the owner's switch on the Pages tab.
 
 **Unclear, or not possible with the blocks?** Comment your question or the closest option,
 leave the issue open, and move on (CLAUDE.md). Never write code to fill a gap.

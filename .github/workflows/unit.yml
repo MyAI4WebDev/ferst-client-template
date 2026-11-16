@@ -57,6 +57,16 @@ jobs:
       - run: npm install
       - name: Single-source guard (no copies of ferst-core in src/)
         run: npx --no-install ferst-check-thin
+      # A release never publishes more pages than the site's plan allows: the platform writes
+      # the allowance into ferst-site.json (`pages`). Engines before 0.10.2 have no check.
+      - name: Pages within the plan
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
+        run: |
+          if [ -e node_modules/.bin/ferst-check-pages ]; then
+            npx --no-install ferst-check-pages
+          else
+            echo "This engine has no page check yet (ferst-core 0.10.2 adds it)."
+          fi
 
   build:
     # Build smoke: catches Zod/pageSchema breakages, content-collection misconfig
