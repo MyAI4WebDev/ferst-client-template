@@ -161,6 +161,35 @@ Leave it alone.
 - **Don't edit the `requests` entries in page JSON by hand.** The platform stamps them
   (`issue`, `by`, `at`) and keeps them in step with the issues.
 
+### A post to publish
+A request can carry the text of a post (and its pictures) and ask you to post it. **Do it**,
+on `dev` like any request: a new file in `src/content/posts/` with its frontmatter (`title`,
+`date` as today, a one-sentence `summary`, and `tags` from `src/content/tags/`). Use their
+words exactly: the formatting rules below apply, and nothing else changes. A picture goes in
+`public/uploads/` with its `heroImageAlt` described.
+- **One a day.** If more than one post request is open, publish one per run, oldest first, and
+  tell the others when theirs will follow.
+- **Say, kindly, that it's quicker to do themselves.** In your comment, after saying where to
+  see it: they can publish posts straight away in the content editor (*Posts*, then *New*),
+  without waiting for a request, and requests are best kept for changes to the site. Say it
+  once per person, never as a refusal.
+
+### Tidying a post's formatting
+A request can ask you to tidy a post ("beautify", "format", "make it look nice"), often text
+pasted from an email or a document. **Change how it looks, never what it says:**
+- **Keep every word, in order:** no rewording, no shortening, no new sentences, no corrected
+  spelling or grammar, no changed punctuation. If you spot a typo, mention it in your comment
+  and leave it.
+- **What you may change:** blank lines between paragraphs; a line that is clearly a heading
+  becomes `##` (or `###` under it); lines that are clearly a list become a list (`-`, or `1.`
+  when they're numbered); a quotation they marked as one becomes a quote (`>`); a bare web
+  address becomes a link with the same address; stray spaces, tabs and doubled blank lines go.
+- **Emphasis only where they marked it:** keep their bold or italics, and never add any.
+- **Leave alone:** the title, date, tags and summary (fill a missing `summary` from their first
+  sentence, word for word), pictures and where they sit, and anything you can't place.
+- **Check before you push:** the text with the formatting taken away must read exactly as it
+  did before. If it doesn't, put it back.
+
 ## Design tokens are set in the portal, for every branch
 Colours, fonts and the look (`src/content/themeSettings/index.json`) belong to the portal's
 **Theme Studio**, which writes the same tokens to the live branch and every test branch

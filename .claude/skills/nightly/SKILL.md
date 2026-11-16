@@ -66,6 +66,9 @@ open a `core-request`, check that one about the same problem isn't already open.
    reviews and merges it, and that's the check before the live site. Comment on the issue as
    CLAUDE.md says (where to see it on the test copy, in plain words, no PR link, nothing about
    how it was done), and close the issue.
+   - A request to **publish a post**, or to **tidy a post's formatting**, follows CLAUDE.md's
+     "A post to publish" and "Tidying a post's formatting": one post a day, their words kept
+     exactly, and a kind word that they can publish posts themselves in the content editor.
    - A request from before this way of working may still have an open PR into `dev`. Leave it
      until that PR is merged, then comment where to see the change on the test copy and close
      the issue.
