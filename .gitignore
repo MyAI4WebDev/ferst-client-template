@@ -21,11 +21,6 @@ npm-debug.log*
 .vscode/*
 !.vscode/extensions.json
 
-# Content authored in production by editors via /admin (committed by the platform
-# git-proxy straight to the configured branch). Local dev edits must not pollute.
-src/content/posts/
-public/uploads/
-
 # migrate-site skill workspace (a snapshot of the old site) — temporary, never committed
 .migration/
 
