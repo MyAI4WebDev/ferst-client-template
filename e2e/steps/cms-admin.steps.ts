@@ -34,3 +34,24 @@ Then('the generated CMS config is served', async ({ page }) => {
   expect(res.status(), 'GET /admin/config.yml').toBe(200);
   expect(await res.text()).toContain('backend');
 });
+
+// The sign-in, once the CMS bundle has booted far enough to draw it.
+Then('the content editor offers {string}', async ({ page }, label: string) => {
+  await expect(page.getByRole('button', { name: label, exact: true })).toBeVisible({ timeout: 30_000 });
+});
+
+Then('the content editor is headed {string}', async ({ page }, heading: string) => {
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(heading);
+});
+
+Then("the content editor's sign-in never mentions {string} or {string}", async ({ page }, a: string, b: string) => {
+  // What people see and hear: the accessibility tree, so text the CMS keeps hidden from
+  // everyone (its font-loading probe) doesn't count, and screen-reader announcements do.
+  const text = await page.locator('body').ariaSnapshot();
+  expect(text).not.toContain(a);
+  expect(text).not.toContain(b);
+});
+
+Then('the content editor offers no sign-in with an access token', async ({ page }) => {
+  await expect(page.getByRole('button', { name: /PAT|access token/i })).toHaveCount(0);
+});

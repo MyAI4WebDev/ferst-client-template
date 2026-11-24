@@ -15,3 +15,14 @@ Feature: The CMS admin entry is served and wired
     And the admin page is titled "Content editor"
     And the admin page references the CMS bundle
     And the generated CMS config is served
+
+  # A site's first editor wasn't sure the sign-in was genuine: it named the tools behind
+  # it (the CMS and GitHub) and offered a sign-in with an access token. Editors sign in
+  # with the Ferst account they use for the portal, and the screen says so. This boots the
+  # CMS bundle (from its CDN) as far as its sign-in, which needs no platform worker.
+  Scenario: The sign-in names Ferst, not the tools behind it
+    When the visitor opens the CMS admin page
+    Then the content editor offers "Sign in with your Ferst account"
+    And the content editor is headed "Content editor"
+    And the content editor's sign-in never mentions "GitHub" or "Sveltia"
+    And the content editor offers no sign-in with an access token

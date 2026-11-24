@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <title>Content editor</title>
+    <!-- The logo is the site's icon (logo_url), a square with its own background: round its
+         corners so they don't show against the editor's dark theme. -->
+    <style>img[src="/apple-touch-icon.png"] { border-radius: 22%; }</style>
   </head>
   <body>
     <!-- Sveltia CMS — Git-backed editor. Reads ./config.yml (GENERATED at build by
@@ -12,20 +15,48 @@
          platform git-proxy (see the generated config.yml backend). -->
     <script src="https://unpkg.com/@sveltia/cms@0.107/dist/sveltia-cms.js" type="module"></script>
     <script>
-      // Client-facing brand: the CMS backend is GitHub, but editors sign in with
-      // their Ferst account (our auth popup). Relabel the sign-in button so it
-      // never says "GitHub". Best-effort text swap; a wording change just no-ops.
+      // Client-facing brand: the CMS keeps its content in GitHub, but editors sign in with
+      // their Ferst account (our auth popup). The sign-in must name Ferst, never the tools
+      // behind it: a first editor wasn't sure it was genuine. The logo is the site's own
+      // icon (logo_url in the generated config.yml). Here:
+      //   - the "Sveltia CMS" heading reads "Content editor" (and its screen-reader welcome);
+      //   - "Sign In with GitHub" (any case) reads "Sign in with your Ferst account";
+      //   - the "… Using PAT" (access token) sign-in is hidden: editors never hold a token.
+      // Text nodes are changed in place, so the CMS's own elements are untouched. Best effort:
+      // a wording change upstream just no-ops, and the template's e2e (cms-admin.feature) fails.
       (function () {
-        var relabel = function () {
-          document.querySelectorAll('button, a').forEach(function (el) {
-            var t = (el.textContent || '').trim();
-            if (t === 'Sign in with GitHub' || t === 'Login with GitHub') {
-              el.textContent = 'Sign in with Ferst';
+        var swaps = [
+          [/^sveltia cms$/i, 'Content editor'],
+          [/^(sign in|log ?in) with github$/i, 'Sign in with your Ferst account'],
+          [/^welcome to sveltia cms$/i, 'Welcome to the content editor'],
+        ];
+        var hide = /^(sign in|log ?in) with github using pat$/i;
+        var fix = function () {
+          var walk = document.createTreeWalker(document.body || document.documentElement, NodeFilter.SHOW_TEXT);
+          var node;
+          while ((node = walk.nextNode())) {
+            var t = (node.nodeValue || '').trim();
+            if (!t || t.length > 60) continue;
+            if (hide.test(t)) {
+              var b = node.parentElement && node.parentElement.closest('button, a');
+              if (b && b.style.display !== 'none') b.style.display = 'none';
+              continue;
             }
-          });
+            for (var i = 0; i < swaps.length; i++) {
+              if (swaps[i][0].test(t)) { node.nodeValue = swaps[i][1]; break; }
+            }
+          }
         };
-        try { new MutationObserver(relabel).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
-        document.addEventListener('DOMContentLoaded', relabel);
+        var queued = false;
+        var schedule = function () {
+          if (queued) return;
+          queued = true;
+          requestAnimationFrame(function () { queued = false; fix(); });
+        };
+        try {
+          new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true, characterData: true });
+        } catch (e) {}
+        document.addEventListener('DOMContentLoaded', fix);
       })();
     </script>
   </body>
